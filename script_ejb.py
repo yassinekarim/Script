@@ -1,8 +1,9 @@
 #!/usr/local/bin/python3.4
 # -*-coding:utf-8 -*
 import sys
-if len(sys.argv) < 2:
-    print("Saisissez le chemin vers les log du serveur en paramètre")
+from lxml import etree as ET
+if len(sys.argv) < 3:
+    print("Saisissez le chemin vers les log du serveur et le fichier components.xml en paramètre")
     sys.exit(1)
 jndiList=list()
 with open(sys.argv[1], 'r') as log:
@@ -18,4 +19,9 @@ with open(sys.argv[1], 'r') as log:
                 jndi=ligne.split('!')#jndi[0] contains the JNdi and jndi[1] contains the local interface 
                 jndiList.append((jndi[0][1:],jndi[1].replace(jndi[1][jndi[1].rfind('.')+1:],jndi[0][jndi[0].rfind('/')+1:]))) # replace local interface class by the implementation class
 
-print(jndiList)
+tree = ET.parse(sys.argv[2])
+root = tree.getroot()
+for jndi,classe in jndiList:
+    root.append(ET.fromstring('<component class="'+classe+'" jndi-name="'+jndi+'" />'))
+
+tree.write(sys.argv[2])
