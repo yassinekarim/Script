@@ -24,6 +24,4 @@ for jndi,classe in jndiList:
     el =ET.fromstring('<component class="'+classe+'" jndi-name="'+jndi+'" />')
     el.tail='\n\t'
     root.insert(2, el)
-    
-print(ET.tostring(tree, pretty_print=True))
 tree.write(sys.argv[2],pretty_print=True,encoding='utf-8')
