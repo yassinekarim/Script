@@ -23,13 +23,8 @@ def convert(namespace):
         return namespace
     else:
         print("erreur namespace")
-tree = ET.parse(sys.argv[1])
-root = tree.getroot()
-if( "{http://java.sun.com/xml/ns/javaee}web-app" == root.tag  ):
-    root.set("{http://www.w3.org/2001/XMLSchema-instance}schemaLocation","http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd")
-    root.set("version","3.0")
-elif ( "{http://jboss.com/products/seam/components}components" == root.tag  ):
-    COMPONENT_NAMESPACE = "http://jboss.org/schema/seam/components"
+def changeDefSeam(page):
+    COMPONENT_NAMESPACE = "http://jboss.org/schema/seam/"+page
     COMPONENT = "{%s}" % COMPONENT_NAMESPACE
     NSMAP = {None : COMPONENT_NAMESPACE} 
     for key in root.nsmap.keys():
@@ -41,10 +36,19 @@ elif ( "{http://jboss.com/products/seam/components}components" == root.tag  ):
     for element in root:
         newRoot.append(element)
     tree._setroot(newRoot)
-elif ( "{http://java.sun.com/xml/ns/javaee}web-app" == root.tag  ):
+tree = ET.parse(sys.argv[1])
+root = tree.getroot()
+if( "{http://java.sun.com/xml/ns/javaee}web-app" == root.tag  ):
     root.set("{http://www.w3.org/2001/XMLSchema-instance}schemaLocation","http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd")
     root.set("version","3.0")
-elif ( "{http://java.sun.com/xml/ns/javaee}web-app" == root.tag  ):
-    root.set("{http://www.w3.org/2001/XMLSchema-instance}schemaLocation","http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd")
-    root.set("version","3.0")  
+elif ( "{http://jboss.com/products/seam/components}components" == root.tag ):
+    changeDefSeam("components")
+elif (  root.tag=="{http://jboss.com/products/seam/pages}pages" ):
+    changeDefSeam("pages")
+elif ( "{http://java.sun.com/xml/ns/persistence}persistence" == root.tag  ):
+    root.set("{http://www.w3.org/2001/XMLSchema-instance}schemaLocation","http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd")
+    root.set("version","2.0")
+elif ( "{http://java.sun.com/xml/ns/javaee}faces-config" == root.tag  ):
+    root.set("{http://www.w3.org/2001/XMLSchema-instance}schemaLocation","http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_1.xsd")
+    root.set("version","2.1")
 tree.write(sys.argv[1],pretty_print=True,encoding='utf-8')
