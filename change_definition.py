@@ -1,17 +1,50 @@
-#!/usr/local/bin/python3.4
+
 # -*-coding:utf-8 -*
 import sys
+import re
 from lxml import etree as ET
 basestring = (str,bytes)
 if len(sys.argv) < 2:
     print("Saisissez le chemin vers web.xml ou persistence.xml")
     sys.exit(1)
+def newXml(element):
+    child=list(element)
+    if(not child):
+        element.tag=element.tag.replace("http://jboss.com/products/seam/","http://jboss.org/schema/seam/")
+
+    else:
+        for el in child:
+            newXml(el)    
+        element.tag=element.tag.replace("http://jboss.com/products/seam/","http://jboss.org/schema/seam/")
+def convert(namespace):
+    if re.match("http://jboss.com/products/seam/*", namespace):       
+        return namespace.replace("http://jboss.com/products/seam/","http://jboss.org/schema/seam/")
+    elif("http://www.w3.org/2001/XMLSchema-instance"==namespace):
+        return namespace
+    else:
+        print("erreur namespace")
 tree = ET.parse(sys.argv[1])
 root = tree.getroot()
-print(root.tag)
 if( "{http://java.sun.com/xml/ns/javaee}web-app" == root.tag  ):
-    root.atribs.pop("key")
-    root.set("{http://java.sun.com/xml/ns/javaee}xsi","http://www.w3.org/2001/XMLSchema-instance")
     root.set("{http://www.w3.org/2001/XMLSchema-instance}schemaLocation","http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd")
     root.set("version","3.0")
+elif ( "{http://jboss.com/products/seam/components}components" == root.tag  ):
+    COMPONENT_NAMESPACE = "http://jboss.org/schema/seam/components"
+    COMPONENT = "{%s}" % COMPONENT_NAMESPACE
+    NSMAP = {None : COMPONENT_NAMESPACE} 
+    for key in root.nsmap.keys():
+        NSMAP[key]=convert(root.nsmap[key])
+    newRoot = ET.Element(COMPONENT + "components", nsmap=NSMAP)
+    newRoot.set('{http://www.w3.org/2001/XMLSchema-instance}schemaLocation',root.get('{http://www.w3.org/2001/XMLSchema-instance}schemaLocation').replace("http://jboss.com/products/seam/","http://jboss.org/schema/seam/").replace("2.2","2.3"))
+    newXml(root)
+    newRoot.text=root.text
+    for element in root:
+        newRoot.append(element)
+    tree._setroot(newRoot)
+elif ( "{http://java.sun.com/xml/ns/javaee}web-app" == root.tag  ):
+    root.set("{http://www.w3.org/2001/XMLSchema-instance}schemaLocation","http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd")
+    root.set("version","3.0")
+elif ( "{http://java.sun.com/xml/ns/javaee}web-app" == root.tag  ):
+    root.set("{http://www.w3.org/2001/XMLSchema-instance}schemaLocation","http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd")
+    root.set("version","3.0")  
 tree.write(sys.argv[1],pretty_print=True,encoding='utf-8')
