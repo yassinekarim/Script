@@ -1,4 +1,4 @@
-
+#!/usr/local/bin/python3.4
 # -*-coding:utf-8 -*
 import sys
 import re
@@ -36,7 +36,8 @@ def changeDefSeam(page):
     for element in root:
         newRoot.append(element)
     tree._setroot(newRoot)
-tree = ET.parse(sys.argv[1])
+parser = ET.XMLParser(remove_blank_text=True)
+tree = ET.parse(sys.argv[1],parser)
 root = tree.getroot()
 if( "{http://java.sun.com/xml/ns/javaee}web-app" == root.tag  ):
     root.set("{http://www.w3.org/2001/XMLSchema-instance}schemaLocation","http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd")

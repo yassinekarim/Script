@@ -18,10 +18,10 @@ with open(sys.argv[1], 'r') as log:
                 ligne=listLog.__next__()
                 jndi=ligne.split('!')#jndi[0] contains the JNdi and jndi[1] contains the local interface 
                 jndiList.append((jndi[0][1:],jndi[1].replace(jndi[1][jndi[1].rfind('.')+1:],jndi[0][jndi[0].rfind('/')+1:]))) # replace local interface class by the implementation class
-tree = ET.parse(sys.argv[2])
+parser = ET.XMLParser(remove_blank_text=True)
+tree = ET.parse(sys.argv[2],parser)
 root = tree.getroot()
 for jndi,classe in jndiList:
     el =ET.fromstring('<component class="'+classe+'" jndi-name="'+jndi+'" />')
-    el.tail='\n\t'
     root.insert(2, el)
 tree.write(sys.argv[2],pretty_print=True,encoding='utf-8')
