@@ -17,7 +17,7 @@ def newXml(element):
             newXml(el)    
         element.tag=element.tag.replace("http://jboss.com/products/seam/","http://jboss.org/schema/seam/")
 def convert(namespace):
-    if re.match("http://jboss.com/products/seam/*", namespace):       
+    if re.match("http://jboss.com/products/seam/", namespace):       
         return namespace.replace("http://jboss.com/products/seam/","http://jboss.org/schema/seam/")
     elif("http://www.w3.org/2001/XMLSchema-instance"==namespace):
         return namespace
