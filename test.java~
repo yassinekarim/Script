@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.Cascade;
-import org.richfaces.event.UploadEvent;
+import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 
 /**
@@ -80,9 +80,9 @@ public class Package implements Serializable{
 	 * 
 	 */
 
-	public void uploadEventlistener(UploadEvent event) {
+	public void uploadEventlistener(FileUploadEvent event) {
 		try {
-			UploadedFile item = event.getUploadItem();
+			UploadedFile item = event.getUploadedFile();
 			if (item.getData() != null && item.getData().length > 0) {
 				this.xdwDoc = new String(item.getData());
 			} else {

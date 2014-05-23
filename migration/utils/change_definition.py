@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.4
+#!/opt/python3/bin/python3
 # -*-coding:utf-8 -*
 import sys
 import re
@@ -29,7 +29,7 @@ def changeDefSeam(page):
     NSMAP = {None : COMPONENT_NAMESPACE} 
     for key in root.nsmap.keys():
         NSMAP[key]=convert(root.nsmap[key])
-    newRoot = ET.Element(COMPONENT + "components", nsmap=NSMAP)
+    newRoot = ET.Element(COMPONENT + page, nsmap=NSMAP)
     newRoot.set('{http://www.w3.org/2001/XMLSchema-instance}schemaLocation',root.get('{http://www.w3.org/2001/XMLSchema-instance}schemaLocation').replace("http://jboss.com/products/seam/","http://jboss.org/schema/seam/").replace("2.2","2.3"))
     newXml(root)
     newRoot.text=root.text

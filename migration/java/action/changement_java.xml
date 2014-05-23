@@ -1,0 +1,37 @@
+<java>
+	<annotation  regex="^[\t ]*@[\s]*(org.hibernate.annotations.)?CollectionOfElements[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.persistence.ElementCollection" >
+		<mapping old="targetElement" new="targetClass"/>
+		<mapping old="fetch" new="fech"/>
+	</annotation>
+	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?NotEmpty[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.NotEmpty"/>
+	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?NotNull[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.NotNull"/>
+	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Length[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Size"/>
+	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Email[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Email"/>
+	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Min[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Min"/>
+	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Max[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Max"/>
+	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Pattern[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Pattern">
+		<mapping old="regex" new="regexp"/>
+	</annotation>
+	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Range[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Range"/>
+	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Past[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Past"/>
+	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Valid[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Valid"/>
+	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?CreditCardNumber[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.CreditCardNumber"/>
+	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Digits[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Digits">
+		<mapping old="integerDigits" new="integer"/>
+		<mapping old="fractionDigits" new="fraction"/>
+	</annotation>
+	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Future[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Future"/>
+	<class regex="(org.richfaces.model.)?UploadItem(?!;)" replacement="org.richfaces.model.UploadedFile">
+		<method regex="getUploadItem"/>
+	</class>
+	<class regex="(org.richfaces.model.)?Ordering(?!;)" replacement="org.richfaces.component.SortOrder">
+		<mapping old="ASCENDING" new="ascending"/>
+		<mapping old="DESCENDING" new="descending"/>
+		<mapping old="UNSORTED" new="unsorted"/>
+	</class>
+	        
+	<class regex="(org.richfaces.event.)?UploadEvent(?!;)" replacement="org.richfaces.event.FileUploadEvent"/>
+	
+	
+	<method regex="getUploadItem" replacement="getUploadedFile"/>
+</java>

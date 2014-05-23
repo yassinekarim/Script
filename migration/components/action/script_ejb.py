@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.4
+#!/opt/python3/bin/python3
 # -*-coding:utf-8 -*
 import sys
 from lxml import etree as ET

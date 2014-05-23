@@ -11,7 +11,7 @@ package net.ihe.gazelle.constraints.xsd;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import org.hibernate.annotations.CollectionOfElements;
+import javax.persistence.ElementCollection;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,8 +33,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.Cascade;
-import org.richfaces.event.UploadEvent;
-import org.richfaces.model.UploadItem;
+import org.richfaces.event.FileUploadEvent;
+import org.richfaces.model.UploadedFile;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -80,9 +80,9 @@ public class Package implements Serializable{
 	 * 
 	 */
 
-	public void uploadEventlistener(UploadEvent event) {
+	public void uploadEventlistener(FileUploadEvent event) {
 		try {
-			UploadItem item = event.getUploadItem();
+			UploadedFile item = event.getUploadedFile();
 			if (item.getData() != null && item.getData().length > 0) {
 				this.xdwDoc = new String(item.getData());
 			} else {
@@ -141,7 +141,7 @@ public class Package implements Serializable{
 	protected String xmlNamespace;
 	
 	@XmlAttribute(name="standards")
-	@CollectionOfElements(targetElement = java.lang.String.class)
+	@ElementCollection(targetClass = java.lang.String.class)
     @JoinTable(name = "mbv_standards",
         joinColumns = @JoinColumn(name = "package_id")
     )
