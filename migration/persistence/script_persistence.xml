@@ -1,0 +1,53 @@
+#!/opt/python3/bin/python3 
+# -*-coding:utf-8 -*
+from lxml import etree as ET
+
+def parseXml(filePath):
+    parser = ET.XMLParser(remove_blank_text=True)
+    tree = ET.parse(filePath,parser)
+    root = tree.getroot()
+    <?xml version="1.0" encoding="UTF-8"?>
+# <persistence xmlns="http://java.sun.com/xml/ns/persistence" 
+#        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+#        xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd" 
+#        version="2.0">
+
+#     <persistence-unit name="XDWSimulator-PersistenceUnit">
+#         <provider>org.hibernate.ejb.HibernatePersistence</provider> 
+#         <jta-data-source>java:jboss/datasources/XDWSimulatorDS</jta-data-source>
+
+#         <jar-file>simulator-common-ejb.jar</jar-file>
+#         <!-- <jar-file>mbval-documentation-ejb.jar</jar-file> -->
+
+#         <properties>
+#             <!-- <property name="hibernate.dialect" value="${hibernate.dialect}" />
+#             <property name="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl.auto}" />
+#             <property name="hibernate.show_sql" value="${hibernate.show_sql}" />
+#             <property name="hibernate.format_sql" value="true" /> -->
+         
+#             <!-- CAUTION: must be set to a number greater than 0 in production environment. For development
+#                 batching is turned off.
+#             -->
+#     <!--    <property name="hibernate.cache.region.factory_class"
+#      value="org.hibernate.cache.infinispan.JndiInfinispanRegionFactory"/>  -->
+# <property name="hibernate.cache.infinispan.cachemanager"
+#      value="java:jboss/infinispan/hibernate"/>
+# <property name="hibernate.transaction.manager_lookup_class"
+#      value="org.hibernate.transaction.JBossTransactionManagerLookup"/>
+# <property name="hibernate.cache.use_second_level_cache" value="true"/>
+# <property name="hibernate.cache.use_minimal_puts" value="true"/>
+
+#  <property name="jboss.entity.manager.factory.jndi.name"
+#                 value="java:jboss/root/XDWSimulator-ejb/EntityManagerFactory" /> 
+#             <property name="hibernate.id.new_generator_mappings" value="false" />
+#             <!--  <property name="hibernate.jdbc.batch_size" value="20" />
+
+#             <property name="hibernate.cache.use_query_cache" value="false" />
+
+#             <property name="hibernate.cache.use_second_level_cache" value="true" />-->
+            
+#         <!--    <property name="hibernate.cache.use_second_level_cache" value="true"/>
+#             <property name="hibernate.cache.use_minimal_puts" value="true"/> -->
+#         </properties>
+#     </persistence-unit>
+# </persistence>
