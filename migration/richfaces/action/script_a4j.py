@@ -2,33 +2,33 @@
 # -*-coding:utf-8 -*
 from lxml import etree as ET
 
-a4jNs="{http://richfaces.org/a4j}"
-hNS="{http://java.sun.com/jsf/html}"
+
 class A4jElement:
     """docstring for A4jElement"""
-
-    def a4jComponantChange(cls,element):
-        if (element.tag== a4jNs+"actionparam"):
-            element.tag=a4jNs+"param"
-        elif (element.tag== a4jNs+"form"):
-            element.tag==hNs+"form"
-        elif (element.tag== a4jNs+"region"):
+    a4jNs="{http://richfaces.org/a4j}"
+    hNs="{http://java.sun.com/jsf/html}"
+    def componantChange(cls,element):
+        if (element.tag== cls.a4jNs+"actionparam"):
+            element.tag=cls.a4jNs+"param"
+        elif (element.tag== cls.a4jNs+"form"):
+            element.tag==cls.hNs+"form"
+        elif (element.tag== cls.a4jNs+"region"):
             print ("selfRendered, renderRegionOnly, ajaxLsitener and immediate attribute are removed/not implemented")
-        elif (element.tag== a4jNs+"AjaxListener"):
+        elif (element.tag== cls.a4jNs+"AjaxListener"):
             print ("a4j:AjaxListener removed didn't replaced yet")
-        elif (element.tag== a4jNs+"support"):
-            element.tag==hNs+"ajax"
-        elif (element.tag== a4jNs+"push"):
+        elif (element.tag== cls.a4jNs+"support"):
+            element.tag==cls.hNs+"ajax"
+        elif (element.tag== cls.a4jNs+"push"):
             print ("a4j:push not supported yet")
-        elif (element.tag== a4jNs+"status"):
+        elif (element.tag== cls.a4jNs+"status"):
             print ("a4j:staus upgrade not yet implemented")
-        elif (element.tag== a4jNs+"log"):
-            if(element.get("popup"):
+        elif (element.tag== cls.a4jNs+"log"):
+            if(element.get("popup")):
                 element.set("mode","popup")
                 element.attrib.pop("popup")
                 print ("popup attribute renamed to mode")
-        elif (element.tag== a4jNs+"outputPanel"):
+        elif (element.tag== cls.a4jNs+"outputPanel"):
             if(element.get("layout")=="none"):
                 element.attrib.pop(layout)
                 element.set("rendered","false")
-    a4jComponantChange=classmethod(a4jComponantChange)
+    componantChange=classmethod(componantChange)

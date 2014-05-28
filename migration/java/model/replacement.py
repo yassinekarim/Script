@@ -26,20 +26,7 @@ class AbstractReplacement:
                 tmp,content=AbstractReplacement.gazelleReplace(content,debut,fin,old,new)
                 offset+=tmp
         return offset,content
-    def executeReplace(self,content):
-        """find all occurence of the regex and call changeCode to change them one by one """
-        regex = re.compile(self.regex,re.MULTILINE)
-        it = regex.finditer(content)
-        importChanged=False
-        offset=0
-        for result in it:
-            debut,fin=result.span()
-            debut+=offset
-            fin+=offset
-            match=result.group()
-            tmp,importChanged,content=self.changeCode(match,content,debut,fin,importChanged)
-            offset+=tmp
-        return content
+
 
     def changeCode(self,match,content,debut,fin,importChanged):
         """ replace code and ad import if necessay"""
@@ -70,6 +57,20 @@ class AbstractReplacement:
                 return offset,True,content
             else:
                 return offset,importChanged,content
+    def executeReplace(self,content):
+        """find all occurence of the regex and call changeCode to change them one by one """
+        regex = re.compile(self.regex,re.MULTILINE)
+        it = regex.finditer(content)
+        importChanged=False
+        offset=0
+        for result in it:
+            debut,fin=result.span()
+            debut+=offset
+            fin+=offset
+            match=result.group()
+            tmp,importChanged,content=self.changeCode(match,content,debut,fin,importChanged)
+            offset+=tmp
+        return content
 
 class AnnotationReplacement(AbstractReplacement):
 
@@ -89,7 +90,7 @@ class AnnotationReplacement(AbstractReplacement):
         if (pointIndex!=-1):#found annotation with package declaration eg: @org.hibernate.annotations.CollectionOfElements(targetElement = java.lang.String.class)
             tmp,content=AbstractReplacement.gazelleReplace(content,debut,fin,strWithoutP[indexAt:],self.replacement)
             offset+=tmp
-            return importChanged,content
+            return offset,importChanged,content
         else:#found annoataio withou package declaration eg :@CollectionOfElements(targetElement = java.lang.String.class)
             tmp,content=AbstractReplacement.gazelleReplace(content,debut,fin,strWithoutP[indexAt+1:],self.replacement[self.replacement.rfind(".")+1:])
             offset+=tmp

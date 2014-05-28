@@ -2,13 +2,13 @@
 # -*-coding:utf-8 -*
 from lxml import etree as ET
 
-richNs="{http://richfaces.org/rich}"
-hNs="{http://java.sun.com/jsf/html}"
-xhtmlNs="{http://www.w3.org/1999/xhtml}"
+
 class RichElement:
     """docstring for RichElement"""
 
-        
+    richNs="{http://richfaces.org/rich}"
+    hNs="{http://java.sun.com/jsf/html}"
+    xhtmlNs="{http://www.w3.org/1999/xhtml}"  
     def migrateValueChangeAttribute(cls,element):
         if(element.get("ValueChangeListener")):
             element.set("itemchangeListener",element.get("ValueChangeListner"))
@@ -18,117 +18,117 @@ class RichElement:
             element.attrib.pop("ItemChangeEvent")
     migrateValueChangeAttribute=classmethod(migrateValueChangeAttribute)
 
-    def richComponantChange(cls,element):
+    def componantChange(cls,element):
         #richfaces Valisation
-        if (element.tag== richNs+"ajaxValidator"):
-            element.tag=richNs+"validator"
-        elif (element.tag== richNs+"beanValidator"):
-            element.tag==hNs+"validateBean"
+        if (element.tag== cls.richNs+"ajaxValidator"):
+            element.tag=cls.richNs+"validator"
+        elif (element.tag== cls.richNs+"beanValidator"):
+            element.tag==cls.hNs+"validateBean"
             print ("summary not supported")
         #richfaces Input Components
-        elif (element.tag== richNs+"calendar"):
+        elif (element.tag== cls.richNs+"calendar"):
             print ("method in client side API renamed")
-        elif (element.tag== richNs+"colorPicker"):
+        elif (element.tag== cls.richNs+"colorPicker"):
             print("colorPicker not implemented (custom component)")
-        elif (element.tag== richNs+"comboBox"):
-            element.tag=richNs+"autocomplete"
+        elif (element.tag== cls.richNs+"comboBox"):
+            element.tag=cls.richNs+"autocomplete"
             print ("autoComplete Unified version of suggestionBox and comboBox from 3.3.x.")
-        elif (element.tag== richNs+"editor"):
+        elif (element.tag== cls.richNs+"editor"):
             print ("not sure if editor works")
-        elif (element.tag== richNs+"fileUpload"):
+        elif (element.tag== cls.richNs+"fileUpload"):
             print ("")
-        elif (element.tag in [richNs+"inplaceInput",richNs+"inplaceSelect"]):
+        elif (element.tag in [cls.richNs+"inplaceInput",cls.richNs+"inplaceSelect"]):
             if(element.get("onviewactivated")):
                 element.set("onchange",element.get("onviewactivated"))
                 element.attrib.pop("onviewactivated")
-        elif (element.tag== richNs+"suggestionBox"):
-            element.tag=richNs+"autocomplete"
+        elif (element.tag== cls.richNs+"suggestionBox"):
+            element.tag=cls.richNs+"autocomplete"
             print ("autoComplete Unified version of suggestionBox and comboBox from 3.3.x.")
         #Rich Panel/Output Components
-        elif (element.tag== richNs+"modalPanel"):
-            element.tag=richNs+"popupPanel"
+        elif (element.tag== cls.richNs+"modalPanel"):
+            element.tag=cls.richNs+"popupPanel"
             if(element.get("showWhenRendered")):
                 element.set("show",element.get("showWhenRendered"))
                 element.attrib.pop("showWhenRendered") 
-        elif (element.tag in [richNs+"panelBar",richNs+"panelBarItem"]):
+        elif (element.tag in [cls.richNs+"panelBar",cls.richNs+"panelBarItem"]):
             element.tag=element.tag.replace("panelBar","accordion")
-        elif (element.tag== richNs+"panelMenu"):
+        elif (element.tag== cls.richNs+"panelMenu"):
             if(element.get("ValueChangeListener")):
                 element.set("itemchangeListener",element.get("ValueChangeListner"))
                 element.attrib.pop("itemchangeListener")
-        elif (element.tag== richNs+"separator"):
-            element.tag=xhtmlNs+"hr"
-        elif (element.tag== richNs+"simpleTogglePanel"):
-            element.tag==richNs+"collapsiblePanel"
-        elif (element.tag in [richNs+"tabPanel",richNs+"tab"]):
+        elif (element.tag== cls.richNs+"separator"):
+            element.tag=cls.xhtmlNs+"hr"
+        elif (element.tag== cls.richNs+"simpleTogglePanel"):
+            element.tag==cls.richNs+"collapsiblePanel"
+        elif (element.tag in [cls.richNs+"tabPanel",cls.richNs+"tab"]):
+            RichElement.migrateValueChangeAttribute(element)
+        elif (element.tag== cls.richNs+"togglePanel"):
+            RichElement.migrateValueChangeAttribute(element)
+        elif (element.tag== cls.richNs+"facets"):
+            element.tag=cls.richNs+"togglePanelItem"
+            RichElement.migrateValueChangeAttribute(element)
+        elif (element.tag== cls.richNs+"toggleControl"):
             RichElement.MigrateValueChangeAttribute(element)
-        elif (element.tag== richNs+"togglePanel"):
-            RichElement.MigrateValueChangeAttribute(element)
-        elif (element.tag== richNs+"facets"):
-            element.tag=richNs+"togglePanelItem"
-            RichElement.MigrateValueChangeAttribute(element)
-        elif (element.tag== richNs+"toggleControl"):
-            RichElement.MigrateValueChangeAttribute(element)
-        elif (element.tag== richNs+"toolBar"):
-            element.tag=richNs+"toolbar"
-        elif (element.tag== richNs+"toolBarGroup"):
-            element.tag=richNs+"toolbarGroup"
-        elif (element.tag== richNs+"toolTip"):
-            element.tag=richNs+"tooltip"
+        elif (element.tag== cls.richNs+"toolBar"):
+            element.tag=cls.richNs+"toolbar"
+        elif (element.tag== cls.richNs+"toolBarGroup"):
+            element.tag=cls.richNs+"toolbarGroup"
+        elif (element.tag== cls.richNs+"toolTip"):
+            element.tag=cls.richNs+"tooltip"
         #Rich Ordering Components
-        elif (element.tag== richNs+"listShuttle"):
-            element.tag=richNs+"pickList"
+        elif (element.tag== cls.richNs+"listShuttle"):
+            element.tag=cls.richNs+"pickList"
             print ("""The RF 3 listShuttle and pickList components were merged into the single pickList comopnent with RichFaces 4
     Note: The sourceList is not longer mutable, and is available only by subtraacting the target list from thh complete list.""")
         #Rich Iteration Components
-        elif (element.tag== richNs+"column"):
-            element.tag=richNs+"column"
-        elif (element.tag== richNs+"columnGroup"):
-            element.tag=richNs+"columnGroup"
-        elif (element.tag== richNs+"column"):
-            element.tag=richNs+"column"
-        elif (element.tag== richNs+"columns"):
+        elif (element.tag== cls.richNs+"column"):
+            element.tag=cls.richNs+"column"
+        elif (element.tag== cls.richNs+"columnGroup"):
+            element.tag=cls.richNs+"columnGroup"
+        elif (element.tag== cls.richNs+"column"):
+            element.tag=cls.richNs+"column"
+        elif (element.tag== cls.richNs+"columns"):
             print ("columns not implemented")
-        elif (element.tag== richNs+"dataOrderingList"):
-            element.tag=richNs+"list"
+        elif (element.tag== cls.richNs+"dataOrderingList"):
+            element.tag=cls.richNs+"list"
             element.set("type","ordered")
-        elif (element.tag== richNs+"dataDefinitionList"):
-            element.tag=richNs+"list"
+        elif (element.tag== cls.richNs+"dataDefinitionList"):
+            element.tag=cls.richNs+"list"
             element.set("type","definitions")
-        elif (element.tag== richNs+"dataList"):
-            element.tag=richNs+"list"
+        elif (element.tag== cls.richNs+"dataList"):
+            element.tag=cls.richNs+"list"
             element.set("type","unordered")
-        elif (element.tag== richNs+"dataFilterSlider"):
+        elif (element.tag== cls.richNs+"dataFilterSlider"):
             print ("dataFilterSlider not implemented")
-        elif (element.tag== richNs+"datascroller"):
-            element.tag=richNs+"dataScroller"
-        elif (element.tag== richNs+"dataTable"):
+        elif (element.tag== cls.richNs+"datascroller"):
+            element.tag=cls.richNs+"dataScroller"
+        elif (element.tag== cls.richNs+"dataTable"):
             print ("dataTable : built i sorting/filtering not suppored")
-        elif(element.tag==richNs+"subTable"):
-            element.tag=richNs+"collapsibleSubTable"
-        elif(element.tag==richNs+"scrollableDataTable"):
-            element.tag=richNs+"extendedDataTable"
+        elif(element.tag==cls.richNs+"subTable"):
+            element.tag=cls.richNs+"collapsibleSubTable"
+        elif(element.tag==cls.richNs+"scrollableDataTable"):
+            element.tag=cls.richNs+"extendedDataTable"
         #Rich Tree Components
-        elif(element.tag==richNs+"treeNodesAdaptor"):
-            element.tag=richNs+"treeModelAdaptor"
-        elif (element.tag==richNs+"recursiveTreeNodesAdaptor"):
-            element.tag=richNs+"treeModelRecursiveAdaptor"
+        elif(element.tag==cls.richNs+"treeNodesAdaptor"):
+            element.tag=cls.richNs+"treeModelAdaptor"
+        elif (element.tag==cls.richNs+"recursiveTreeNodesAdaptor"):
+            element.tag=cls.richNs+"treeModelRecursiveAdaptor"
         # Rich Drag'n'Drop Components
-        elif(element.tag==richNs+"dragSupport"):
-            element.tag=richNs+"dragSource"
-        elif (element.tag==richNs+"dropSupport"):
-            element.tag=richNs+"dropTarget"
-        elif(element.tag==richNs+"dndParam"):
+        elif(element.tag==cls.richNs+"dragSupport"):
+            element.tag=cls.richNs+"dragSource"
+        elif (element.tag==cls.richNs+"dropSupport"):
+            element.tag=cls.richNs+"dropTarget"
+        elif(element.tag==cls.richNs+"dndParam"):
             print ("dndParam : not implemented")
         # Rich Miscellaneous Components
-        elif(element.tag==richNs+"effect"):
+        elif(element.tag==cls.richNs+"effect"):
             print ("effect : not implemented")
-        elif (element.tag==richNs+"gmap"):
+        elif (element.tag==cls.richNs+"gmap"):
             print ("gmap : not implemented")
-        elif(element.tag==richNs+"insert"):
+        elif(element.tag==cls.richNs+"insert"):
             print ("insert : use syntax highlighter custom component")
-        elif(element.tag==richNs+"page"):
+        elif(element.tag==cls.richNs+"page"):
             print ("page : not implemented")
-        elif(element.tag==richNs+"virtualEarth"):
+        elif(element.tag==cls.richNs+"virtualEarth"):
             print ("virtualEarth : not implemented")
-    richComponantChange=classmethod(richComponantChange)
+    componantChange=classmethod(componantChange)
