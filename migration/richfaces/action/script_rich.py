@@ -16,6 +16,7 @@ class RichElement:
         if(element.get("ValueChangeEvent")):
             element.set("ItemChangeEvent",element.get("ValueChangeEvent"))
             element.attrib.pop("ItemChangeEvent")
+        return element
     migrateValueChangeAttribute=classmethod(migrateValueChangeAttribute)
 
     def componantChange(cls,element):
@@ -61,14 +62,14 @@ class RichElement:
         elif (element.tag== cls.richNs+"simpleTogglePanel"):
             element.tag==cls.richNs+"collapsiblePanel"
         elif (element.tag in [cls.richNs+"tabPanel",cls.richNs+"tab"]):
-            RichElement.migrateValueChangeAttribute(element)
+            element=RichElement.migrateValueChangeAttribute(element)
         elif (element.tag== cls.richNs+"togglePanel"):
             RichElement.migrateValueChangeAttribute(element)
         elif (element.tag== cls.richNs+"facets"):
             element.tag=cls.richNs+"togglePanelItem"
-            RichElement.migrateValueChangeAttribute(element)
+            element=RichElement.migrateValueChangeAttribute(element)
         elif (element.tag== cls.richNs+"toggleControl"):
-            RichElement.MigrateValueChangeAttribute(element)
+            element=RichElement.MigrateValueChangeAttribute(element)
         elif (element.tag== cls.richNs+"toolBar"):
             element.tag=cls.richNs+"toolbar"
         elif (element.tag== cls.richNs+"toolBarGroup"):
@@ -131,4 +132,5 @@ class RichElement:
             print ("page : not implemented")
         elif(element.tag==cls.richNs+"virtualEarth"):
             print ("virtualEarth : not implemented")
+        return element
     componantChange=classmethod(componantChange)

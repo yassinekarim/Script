@@ -11,13 +11,13 @@ class A4jElement:
         if (element.tag== cls.a4jNs+"actionparam"):
             element.tag=cls.a4jNs+"param"
         elif (element.tag== cls.a4jNs+"form"):
-            element.tag==cls.hNs+"form"
+            element.tag=cls.hNs+"form"
         elif (element.tag== cls.a4jNs+"region"):
             print ("selfRendered, renderRegionOnly, ajaxLsitener and immediate attribute are removed/not implemented")
         elif (element.tag== cls.a4jNs+"AjaxListener"):
             print ("a4j:AjaxListener removed didn't replaced yet")
         elif (element.tag== cls.a4jNs+"support"):
-            element.tag==cls.hNs+"ajax"
+            element.tag=cls.a4jNs+"ajax"
         elif (element.tag== cls.a4jNs+"push"):
             print ("a4j:push not supported yet")
         elif (element.tag== cls.a4jNs+"status"):
@@ -31,4 +31,5 @@ class A4jElement:
             if(element.get("layout")=="none"):
                 element.attrib.pop(layout)
                 element.set("rendered","false")
+        return element
     componantChange=classmethod(componantChange)

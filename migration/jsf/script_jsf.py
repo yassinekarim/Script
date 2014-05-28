@@ -39,6 +39,10 @@ class XhtmlTransformation:
             elif(key=="process"):
                 element.set("execute",value)
                 element.attrib.pop("process")
+            elif(key=="event"):
+                if key.startswith("on"):
+                    element.set(key,value[2:])
+        return element
     commonAttributeChange = classmethod(commonAttributeChange)
     def changeNsmap(cls,tree,key):
         root=tree.getroot()
@@ -71,10 +75,10 @@ class XhtmlTransformation:
             elif(element.tag=="{http://www.w3.org/1999/xhtml}head"):
                 element.tag="{http://java.sun.com/jsf/html}head"
             elif(XhtmlTransformation.isRich(element.tag)):
-                XhtmlTransformation.commonAttributeChange(element)
-                RichElement.componantChange(element)
+                element=XhtmlTransformation.commonAttributeChange(element)
+                element=RichElement.componantChange(element)
             elif(XhtmlTransformation.isA4J(element.tag)):
-                XhtmlTransformation.commonAttributeChange(element)
-                A4jElement.componantChange(element)
+                element=XhtmlTransformation.commonAttributeChange(element)
+                element=A4jElement.componantChange(element)
         tree.write(filePath,pretty_print=True,encoding='utf-8')
     upgrade=classmethod(upgrade)
