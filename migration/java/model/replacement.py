@@ -110,18 +110,20 @@ class AnnotationReplacement(AbstractReplacement):
                 return offset,True,content
             else:
                 return offset,importChanged,content
-class MethodReplacement(AbstractReplacement): 
+class MethodReplacement(AbstractReplacement):
+    """define change of code for method remplacement"""
     def __init__(self,regex, replacement,applyChange,mapping):
         AbstractReplacement.__init__(self, regex,replacement,mapping) 
         self.applyChange=applyChange
     def changeCode(self,match,content,debut,fin,importChanged):
+        """if the apply change  is set to true call parent changeCode else do nothing"""
         if (self.applyChange):
             return super().changeCode(match,content,debut,fin,True)
         else:
             return 0,True,content
 
 class ClassReplacement(AbstractReplacement):
-
+    """define change of code for a class remplacement"""
     def __init__(self,regex, replacement,methodChange,mapping):
         AbstractReplacement.__init__(self, regex,replacement,mapping)
         self.methodChange=methodChange

@@ -4,10 +4,11 @@ from lxml import etree as ET
 
 
 class A4jElement:
-    """docstring for A4jElement"""
+    """"upgrade a4j tag"""
     a4jNs="{http://richfaces.org/a4j}"
     hNs="{http://java.sun.com/jsf/html}"
     def componantChange(cls,element):
+        """migrate a4j tag"""
         if (element.tag== cls.a4jNs+"actionparam"):
             element.tag=cls.a4jNs+"param"
         elif (element.tag== cls.a4jNs+"form"):

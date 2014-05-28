@@ -4,6 +4,7 @@ import sys
 from lxml import etree as ET
 class Search4Ejb:
     def parseLog(cls,logContent,componentPath):
+        """parse the log to find ejb jndi and add them to components.xml"""
         jndiList=list()
         listTexte=logContent.split('\n')
         listLog=iter(listTexte)

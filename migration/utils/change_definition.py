@@ -6,6 +6,7 @@ from lxml import etree as ET
 
 class ChangeDefinition:
     def newXml(cls,root):
+        """change old seam xmlns tag to new one """
         basestring = (str,bytes)
         for el in root.iter():
             if isinstance(el.tag, basestring):
@@ -13,6 +14,7 @@ class ChangeDefinition:
         return root
     newXml=classmethod(newXml)
     def convert(cls,namespace):
+        """change old xmlns to new one """
         namespace=str(namespace)
         if re.match("http://jboss.com/products/seam/", namespace):       
             return namespace.replace("http://jboss.com/products/seam/","http://jboss.org/schema/seam/")
@@ -22,6 +24,7 @@ class ChangeDefinition:
             print("erreur namespace")
     convert=classmethod(convert)
     def changeDefSeam(cls,page,tree):
+        """change definition of pages.xml and components.xml"""
         root=tree.getroot()
         COMPONENT_NAMESPACE = "http://jboss.org/schema/seam/"+page
         COMPONENT = "{%s}" % COMPONENT_NAMESPACE
@@ -38,6 +41,7 @@ class ChangeDefinition:
         return tree
     changeDefSeam=classmethod(changeDefSeam)
     def changedefinition(cls,tree):
+        """change defintion of config file """
         root = tree.getroot()
         if( "{http://java.sun.com/xml/ns/javaee}web-app" == root.tag  ):
             root.set("{http://www.w3.org/2001/XMLSchema-instance}schemaLocation","http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd")

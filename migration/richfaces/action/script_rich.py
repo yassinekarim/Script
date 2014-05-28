@@ -4,12 +4,13 @@ from lxml import etree as ET
 
 
 class RichElement:
-    """docstring for RichElement"""
+    """upgrade rich tag"""
 
     richNs="{http://richfaces.org/rich}"
     hNs="{http://java.sun.com/jsf/html}"
     xhtmlNs="{http://www.w3.org/1999/xhtml}"  
     def migrateValueChangeAttribute(cls,element):
+        """migrate value change attribute a common attribute to some rich tag"""
         if(element.get("ValueChangeListener")):
             element.set("itemchangeListener",element.get("ValueChangeListner"))
             element.attrib.pop("itemchangeListener")
@@ -20,6 +21,7 @@ class RichElement:
     migrateValueChangeAttribute=classmethod(migrateValueChangeAttribute)
 
     def componantChange(cls,element):
+        """migrate rich components """
         #richfaces Valisation
         if (element.tag== cls.richNs+"ajaxValidator"):
             element.tag=cls.richNs+"validator"

@@ -7,6 +7,7 @@ basestring = (str,bytes)
 class PomMigration:
 
     def createDep(cls,groupId,artifactId,version,scope):
+        """create a new dependencies element """
         newdep = ET.Element("{http://maven.apache.org/POM/4.0.0}dependency")    
         groupIdTag=ET.Element("{http://maven.apache.org/POM/4.0.0}groupId")
         groupIdTag.text=groupId
@@ -25,6 +26,7 @@ class PomMigration:
         return newdep
     createDep=classmethod(createDep)
     def newDep(cls,element,groupId,artifactId,vers):
+        """ if version is set update version"""
         version=element.find("{http://maven.apache.org/POM/4.0.0}version")
         if(version!=None):
             version=vers
@@ -33,7 +35,8 @@ class PomMigration:
             scope=scope.text
         return cls.createDep(groupId,artifactId,version,scope)
     newDep=classmethod(newDep)
-    def parseXml(cls,filePath):   
+    def parseXml(cls,filePath):
+        """parse pom.xml to change dependecies version"""
         parser = ET.XMLParser(remove_blank_text=True)
         tree = ET.parse(filePath,parser)
         root = tree.getroot()
@@ -98,6 +101,5 @@ class PomMigration:
                 elif("jbpm-jpdl"==element.find("xmlns:artifactId",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'}).text):
                     parent=element.getparent()
                     parent.remove(element)
-                    
         tree.write(filePath,pretty_print=True,encoding='utf-8')
     parseXml=classmethod(parseXml)

@@ -7,7 +7,9 @@ from migration.components.action.script_ejb import Search4Ejb
 import os
 import subprocess
 class ComponentsMigration:
+    """component.xml migration """
     def parseXml(cls,filePath):
+        """"""
         cls.componentsFilePath.append(filePath)
         parser = ET.XMLParser(remove_blank_text=True)
         tree = ET.parse(filePath,parser)
@@ -29,6 +31,7 @@ class ComponentsMigration:
     parseXml=classmethod(parseXml)
     componentsFilePath=list()
     def addComponents(cls,projectPath):
+        """build and deploy project and give the log to Search4Ejb"""
         oldPath = os.getcwd()
         absoluteProjectPath=os.path.abspath(projectPath)
         os.chdir(projectPath)

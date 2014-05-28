@@ -5,6 +5,7 @@ from migration.utils.change_definition import ChangeDefinition
 class WebMigration:
     
     def parseXml(cls,filePath):
+        """parse the web.xml update definition and richfaces context-param"""
         parser = ET.XMLParser(remove_blank_text=True,load_dtd=True)
         tree = ET.parse(filePath,parser)
         tree=ChangeDefinition.changedefinition(tree)

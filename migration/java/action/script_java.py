@@ -10,6 +10,7 @@ class JavaTransformation:
         return cls.replacementList
     getReplacemetList=classmethod(getReplacemetList)
     def addMethod(cls,content):
+        """add getId method to class wich extend's HibernateDataModel"""
         regexList=["FilterDataModel[\s]*<.+>","HibernateDataModel[\s]*<.+>"]
         for reg in regexList:
             regex = re.compile(reg)  #!!!!!!!!!!!!!!!!! problem multiple match !!!!!!!!!!!!!!!!!!!!!!!!!!! 
@@ -44,6 +45,7 @@ class JavaTransformation:
     reInitMethodList = classmethod(reInitMethodList)
 
     def parseJava(cls,filePath):
+        """reade the java file and replace it's content with the upgraded content"""
         f=open(filePath,"r")
         content = f.read()
         f.close()

@@ -5,8 +5,9 @@ import migration.java.model.replacement
 from lxml import etree as ET
 
 class ConfigurationReader:
-    """docstring for ConfigurationReader"""
+    """read the changement_java.xml file and consruct a list accordingly"""
     def readAnnotation(cls,tag):
+        """read annotation tag and return AnnotationReplacement object"""
         mapping=[]
         for it in tag:
             if (it.tag=="mapping"):
@@ -17,6 +18,7 @@ class ConfigurationReader:
     readAnnotation= classmethod(readAnnotation)
 
     def readClass(cls,tag):
+        """read class tag and return ClassReplacement object"""
         method=[]
         mapping=[]
         for it in tag:
@@ -30,9 +32,11 @@ class ConfigurationReader:
     readClass= classmethod(readClass)    
 
     def readMethod(cls,tag):
+        """read metod tag and return MethodReplacement object"""
         return migration.java.model.replacement.MethodReplacement(tag.get("regex"),tag.get("replacement"),False,[])
     readMethod= classmethod(readMethod) 
     def readTag(cls,tag):
+        """switch the tag to the right method"""
         if(tag.tag=="annotation"):
             return ConfigurationReader.readAnnotation(tag)
         elif(tag.tag=="class"):
@@ -41,6 +45,7 @@ class ConfigurationReader:
             return ConfigurationReader.readMethod(tag)
     readTag= classmethod(readTag)
     def initList(cls):
+        """parse the xml file"""
         script_dir = os.path.dirname(__file__)
         replacementList=[]
         basestring = (str,bytes)

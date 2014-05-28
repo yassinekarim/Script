@@ -4,8 +4,9 @@ from lxml import etree as ET
 from migration.richfaces.action.script_rich import RichElement
 from migration.richfaces.action.script_a4j import A4jElement
 class XhtmlTransformation:
-    """docstring for XhtmlTransformation"""
+    """upgrade to jsf 2.1 and richfaces 4.3.6"""
     def newXhtml(cls,root):
+        """replace http://richfaces.ajax4jsf.org/rich tag by http://richfaces.org/rich"""
         basestring = (str,bytes)
         for el in root.iter():
             if isinstance(el.tag, basestring):
@@ -13,14 +14,17 @@ class XhtmlTransformation:
         return root
     newXhtml = classmethod(newXhtml)
     def isRich(cls,tag):
+        """return True  if the tag is a rich:tag"""
         tag=str(tag)
         return tag.startswith("{http://richfaces.org/rich}")
     isRich = classmethod(isRich)
     def isA4J(cls,tag):
+        """return True  if the tag is a a4j:tag"""
         tag=str(tag)
         return tag.startswith("{http://richfaces.org/a4j}")
     isA4J = classmethod(isA4J)
     def commonAttributeChange(cls,element):
+        """replace atribute/value for both a4j and richfaces """
         for key, value in element.attrib.items():
             if (key=="reRender"):
                 element.set("render",value)
@@ -45,6 +49,7 @@ class XhtmlTransformation:
         return element
     commonAttributeChange = classmethod(commonAttributeChange)
     def changeNsmap(cls,tree,key):
+        """update nameSpace map """
         root=tree.getroot()
         NSMAP=root.nsmap
         NSMAP[key]="http://richfaces.org/rich"
@@ -61,6 +66,7 @@ class XhtmlTransformation:
         return tree
     changeNsmap = classmethod(changeNsmap)
     def upgrade(cls, filePath):
+        """parse the Xhtml file and apply the change according to the tag"""
         print (filePath)
         parser = ET.XMLParser(remove_blank_text=True,resolve_entities=False)
         tree = ET.parse(filePath,parser)

@@ -3,6 +3,7 @@
 class JndiMigration:
 
     def changeJndi(cls,jndiString,scope):
+        """update Jndi to match ejb3.1 jndi rules"""
         if (":" in jndiString):
             index=jndiString.rfind(':')
             if (jndiString[:index]=="java"):
