@@ -1,7 +1,8 @@
 #!/opt/python3/bin/python3 
 # -*-coding:utf-8 -*
 from lxml import etree as ET
-
+import os
+import subprocess
 
 class A4jElement:
     """"upgrade a4j tag"""
@@ -22,8 +23,15 @@ class A4jElement:
         src=element.get("src")
         library,name=A4jElement.parseSrc(src)
         element.attrib.pop("src")
+        if(library.startswith("resources")):
+            library=library[9:]
+        else:
+            input 
+            subprocess.call(["mkdir",""])
+            subprocess.call(["mv","src",])
         element.set("library",library)
         element.set("name",name)
+
     ressourceUpdate=classmethod(ressourceUpdate)
     def componantChange(cls,element):
         """migrate a4j tag"""
