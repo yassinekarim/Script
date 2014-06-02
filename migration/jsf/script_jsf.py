@@ -66,7 +66,7 @@ class XhtmlTransformation:
         return tree
     changeNsmap = classmethod(changeNsmap)
     def upgrade(cls, filePath):
-        """parse the Xhtml file and apply the change according to the tag"""
+        """parse the Xhtml file and apply the change according to the tag+"""
         print (filePath)
         parser = ET.XMLParser(remove_blank_text=True,resolve_entities=False)
         tree = ET.parse(filePath,parser)
@@ -85,6 +85,6 @@ class XhtmlTransformation:
                 element=RichElement.componantChange(element)
             elif(XhtmlTransformation.isA4J(element.tag)):
                 element=XhtmlTransformation.commonAttributeChange(element)
-                element=A4jElement.componantChange(element)
+                element=A4jElement.componantChange(element,filePath)
         tree.write(filePath,pretty_print=True,encoding='utf-8')
     upgrade=classmethod(upgrade)

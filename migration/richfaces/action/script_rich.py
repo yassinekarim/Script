@@ -27,11 +27,23 @@ class RichElement:
             element.tag=cls.richNs+"validator"
         elif (element.tag== cls.richNs+"beanValidator"):
             element.tag==cls.hNs+"validateBean"
+            # comment=ET.Comment(ET.tostring(element))
+            # parent=element.getparent()
+            # parent.insert(parent.index(element),comment)
+            # parent.remove(element)
             print ("summary not supported")
         #richfaces Input Components
         elif (element.tag== cls.richNs+"calendar"):
+            # comment=ET.Comment(ET.tostring(element))
+            # parent=element.getparent()
+            # parent.insert(parent.index(element),comment)
+            # parent.remove(element)
             print ("method in client side API renamed")
         elif (element.tag== cls.richNs+"colorPicker"):
+            comment=ET.Comment(ET.tostring(element))
+            parent=element.getparent()
+            parent.insert(parent.index(element),comment)
+            parent.remove(element)
             print("colorPicker not implemented (custom component)")
         elif (element.tag== cls.richNs+"comboBox"):
             element.tag=cls.richNs+"autocomplete"
@@ -39,7 +51,7 @@ class RichElement:
         elif (element.tag== cls.richNs+"editor"):
             print ("not sure if editor works")
         elif (element.tag== cls.richNs+"fileUpload"):
-            print ("")
+            print("")
         elif (element.tag in [cls.richNs+"inplaceInput",cls.richNs+"inplaceSelect"]):
             if(element.get("onviewactivated")):
                 element.set("onchange",element.get("onviewactivated"))
@@ -91,6 +103,10 @@ class RichElement:
         elif (element.tag== cls.richNs+"column"):
             element.tag=cls.richNs+"column"
         elif (element.tag== cls.richNs+"columns"):
+            comment=ET.Comment(ET.tostring(element))
+            parent=element.getparent()
+            parent.insert(parent.index(element),comment)
+            parent.remove(element)
             print ("columns not implemented")
         elif (element.tag== cls.richNs+"dataOrderingList"):
             element.tag=cls.richNs+"list"
@@ -102,6 +118,10 @@ class RichElement:
             element.tag=cls.richNs+"list"
             element.set("type","unordered")
         elif (element.tag== cls.richNs+"dataFilterSlider"):
+            comment=ET.Comment(ET.tostring(element))
+            parent=element.getparent()
+            parent.insert(parent.index(element),comment)
+            parent.remove(element)
             print ("dataFilterSlider not implemented")
         elif (element.tag== cls.richNs+"datascroller"):
             element.tag=cls.richNs+"dataScroller"
@@ -122,17 +142,41 @@ class RichElement:
         elif (element.tag==cls.richNs+"dropSupport"):
             element.tag=cls.richNs+"dropTarget"
         elif(element.tag==cls.richNs+"dndParam"):
+            comment=ET.Comment(ET.tostring(element))
+            parent=element.getparent()
+            parent.insert(parent.index(element),comment)
+            parent.remove(element)
             print ("dndParam : not implemented")
         # Rich Miscellaneous Components
         elif(element.tag==cls.richNs+"effect"):
+            comment=ET.Comment(ET.tostring(element))
+            parent=element.getparent()
+            parent.insert(parent.index(element),comment)
+            parent.remove(element)
             print ("effect : not implemented")
         elif (element.tag==cls.richNs+"gmap"):
+            comment=ET.Comment(ET.tostring(element))
+            parent=element.getparent()
+            parent.insert(parent.index(element),comment)
+            parent.remove(element)
             print ("gmap : not implemented")
         elif(element.tag==cls.richNs+"insert"):
+            comment=ET.Comment(ET.tostring(element))
+            parent=element.getparent()
+            parent.insert(parent.index(element),comment)
+            parent.remove(element)
             print ("insert : use syntax highlighter custom component")
         elif(element.tag==cls.richNs+"page"):
+            comment=ET.Comment(ET.tostring(element))
+            parent=element.getparent()
+            parent.insert(parent.index(element),comment)
+            parent.remove(element)
             print ("page : not implemented")
         elif(element.tag==cls.richNs+"virtualEarth"):
+            comment=ET.Comment(ET.tostring(element))
+            parent=element.getparent()
+            parent.insert(parent.index(element),comment)
+            parent.remove(element)
             print ("virtualEarth : not implemented")
         return element
     componantChange=classmethod(componantChange)
