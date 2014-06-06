@@ -12,6 +12,7 @@ class XhtmlTransformation:
         for el in root.iter():
             if isinstance(el.tag, basestring):
                 el.tag=str(el.tag).replace("http://richfaces.ajax4jsf.org/rich","http://richfaces.org/rich")
+                el.tag=str(el.tag).replace("http://jboss.com/products/seam/taglib","http://jboss.org/schema/seam/taglib")
         return root
     newXhtml = classmethod(newXhtml)
     def isRich(cls,tag):
@@ -88,12 +89,20 @@ class XhtmlTransformation:
     changeNsmap = classmethod(changeNsmap)
     def upgrade(cls, filePath):
         """parse the Xhtml file and apply the change according to the tag"""
+        print(filePath)
         parser = ET.XMLParser(remove_blank_text=True,resolve_entities=False)
         tree = ET.parse(filePath,parser)
         root=tree.getroot()
         inv_nsmap = {root.nsmap[k] : k for k in root.nsmap}
-        if(inv_nsmap.get("http://richfaces.ajax4jsf.org/rich")!=None ):
-            tree=XhtmlTransformation.changeNsmap(tree,inv_nsmap.get("http://richfaces.ajax4jsf.org/rich"))
+        xmlnsKeys=list()
+        keyRich=inv_nsmap.get("http://richfaces.ajax4jsf.org/rich")
+        keySeam=inv_nsmap.get("http://jboss.com/products/seam/taglib")
+        if(keyRich!=None ):
+            xmlnsKeys.append((keyRich,"http://richfaces.org/rich"))
+        if(keySeam!=None):
+            xmlnsKeys.append((keySeam,"http://jboss.org/schema/seam/taglib"))
+        if(xmlnsKeys):
+            tree=XhtmlTransformation.changeNsmap(tree,xmlnsKeys)
             root=tree.getroot()
         for element in root.iter():
             element=XhtmlTransformation.commonAttributeChange(element,filePath,tree)

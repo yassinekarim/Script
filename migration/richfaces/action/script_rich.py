@@ -46,7 +46,7 @@ class RichElement:
             parent.remove(element)
             print("colorPicker not implemented (custom component)")
         elif (element.tag== cls.richNs+"comboBox"):
-            element.tag=cls.richNs+"autocomplete"
+            element.tag=cls.richNs+"select"
             print ("autoComplete Unified version of suggestionBox and comboBox from 3.3.x.")
         elif (element.tag== cls.richNs+"editor"):
             print ("not sure if editor works")
