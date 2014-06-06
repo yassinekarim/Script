@@ -24,3 +24,9 @@ class Search4Ejb:
             root.insert(2, el)
         tree.write(componentPath,pretty_print=True,encoding='utf-8')
     parseLog=classmethod(parseLog)
+
+
+# f = open(sys.argv[1],"r")
+# content = f.read()     
+# Search4Ejb.parseLog(content,sys.argv[2])
+# f.close()

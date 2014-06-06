@@ -3,6 +3,7 @@
 from lxml import etree as ET
 from migration.richfaces.action.script_rich import RichElement
 from migration.richfaces.action.script_a4j import A4jElement
+import re
 class XhtmlTransformation:
     """upgrade to jsf 2.1 and richfaces 4.3.6"""
     def newXhtml(cls,root):
@@ -23,7 +24,22 @@ class XhtmlTransformation:
         tag=str(tag)
         return tag.startswith("{http://richfaces.org/a4j}")
     isA4J = classmethod(isA4J)
-    def commonAttributeChange(cls,element):
+    def replaceModalPanel(cls,text,show,filePath,element,tree):
+        result= re.search("Richfaces\."+show+"ModalPanel\(.*?\)",text)
+        while result:
+            match=result.group()
+            vPos=match.find(",")
+            if(vPos==-1):
+                text=text.replace(match,"#{rich:component("+match[25:match.__len__()-1]+")}."+show+"()")
+            else:
+                modalPanel=match[25:vPos]
+                json=match[vPos+1:match.__len__()-2]
+                print(json+" found at element "+tree.getpath(element)+" in "+filePath+" please use  #{rich:component("+modalPanel+")}.resize(width,height);and #{rich:component("+modalPanel+")}.moveTo(top,left); to correct the issue")
+                text=text.replace(match,"#{rich:component("+modalPanel+")}."+show+"()")
+            result= re.search("Richfaces\."+show+"ModalPanel\(.*?\)",text)
+        return text
+    replaceModalPanel=classmethod(replaceModalPanel)
+    def commonAttributeChange(cls,element,filePath,tree):
         """replace atribute/value for both a4j and richfaces """
         for key, value in element.attrib.items():
             if (key=="reRender"):
@@ -46,6 +62,11 @@ class XhtmlTransformation:
             elif(key=="event"):
                 if key.startswith("on"):
                     element.set(key,value[2:])
+            elif(key.startswith("on")or key=="href"):
+                text=element.get(key)
+                text=cls.replaceModalPanel(text,"show",filePath,element,tree)
+                text=cls.replaceModalPanel(text,"hide",filePath,element,tree)
+                element.set(key,text)
         return element
     commonAttributeChange = classmethod(commonAttributeChange)
     def changeNsmap(cls,tree,key):
@@ -66,8 +87,7 @@ class XhtmlTransformation:
         return tree
     changeNsmap = classmethod(changeNsmap)
     def upgrade(cls, filePath):
-        """parse the Xhtml file and apply the change according to the tag+"""
-        print (filePath)
+        """parse the Xhtml file and apply the change according to the tag"""
         parser = ET.XMLParser(remove_blank_text=True,resolve_entities=False)
         tree = ET.parse(filePath,parser)
         root=tree.getroot()
@@ -76,15 +96,14 @@ class XhtmlTransformation:
             tree=XhtmlTransformation.changeNsmap(tree,inv_nsmap.get("http://richfaces.ajax4jsf.org/rich"))
             root=tree.getroot()
         for element in root.iter():
+            element=XhtmlTransformation.commonAttributeChange(element,filePath,tree)
             if(element.tag=="{http://www.w3.org/1999/xhtml}body"):
                 element.tag="{http://java.sun.com/jsf/html}body"  #change <body> to <h:body> 
             elif(element.tag=="{http://www.w3.org/1999/xhtml}head"):
                 element.tag="{http://java.sun.com/jsf/html}head"
             elif(XhtmlTransformation.isRich(element.tag)):
-                element=XhtmlTransformation.commonAttributeChange(element)
                 element=RichElement.componantChange(element)
             elif(XhtmlTransformation.isA4J(element.tag)):
-                element=XhtmlTransformation.commonAttributeChange(element)
                 element=A4jElement.componantChange(element,filePath)
         tree.write(filePath,pretty_print=True,encoding='utf-8')
     upgrade=classmethod(upgrade)

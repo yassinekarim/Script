@@ -26,7 +26,7 @@ class JavaTransformation:
         // TODO Auto-generated method stub
         return t.getId();
     }""" +content[fin-1:]
-
+    
         return content
     addMethod=classmethod(addMethod)
     def upgradeCode(cls,content):

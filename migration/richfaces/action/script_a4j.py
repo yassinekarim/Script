@@ -16,9 +16,7 @@ class A4jElement:
         for it in listStr:
             if(it!=""):
                 library+=it+"/"
-        print("before :"+library)
         library+=last
-        print("after :"+library)
         return library,name
     parseSrc=classmethod(parseSrc)
     def getWebAppPath(cls,filePath):

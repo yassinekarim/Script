@@ -51,7 +51,7 @@ class RichElement:
         elif (element.tag== cls.richNs+"editor"):
             print ("not sure if editor works")
         elif (element.tag== cls.richNs+"fileUpload"):
-            print("")
+            pass
         elif (element.tag in [cls.richNs+"inplaceInput",cls.richNs+"inplaceSelect"]):
             if(element.get("onviewactivated")):
                 element.set("onchange",element.get("onviewactivated"))
@@ -161,11 +161,13 @@ class RichElement:
             parent.remove(element)
             print ("gmap : not implemented")
         elif(element.tag==cls.richNs+"insert"):
-            comment=ET.Comment(ET.tostring(element))
-            parent=element.getparent()
-            parent.insert(parent.index(element),comment)
-            parent.remove(element)
-            print ("insert : use syntax highlighter custom component")
+            element.tag="{http://richfaces.org/sandbox/syntaxhighlighter}syntaxhighlighter"
+            insertContent=element.get("content")
+            highlight=element.get("highlight")
+            element.set("language",highlight)
+            element.text=insertContent
+            element.attrib.pop("highlight")
+            element.attrib.pop("content")
         elif(element.tag==cls.richNs+"page"):
             comment=ET.Comment(ET.tostring(element))
             parent=element.getparent()
@@ -178,5 +180,11 @@ class RichElement:
             parent.insert(parent.index(element),comment)
             parent.remove(element)
             print ("virtualEarth : not implemented")
+        elif(element.tag==cls.richNs+"spacer"):
+            comment=ET.Comment(ET.tostring(element))
+            parent=element.getparent()
+            parent.insert(parent.index(element),comment)
+            parent.remove(element)
+            print ("spacer : not implemented")
         return element
     componantChange=classmethod(componantChange)
