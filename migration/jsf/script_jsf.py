@@ -61,7 +61,7 @@ class XhtmlTransformation:
                 element.set("execute",value)
                 element.attrib.pop("process")
             elif(key=="event"):
-                if key.startswith("on"):
+                if value.startswith("on"):
                     element.set(key,value[2:])
             elif(key.startswith("on")or key=="href"):
                 text=element.get(key)
@@ -70,17 +70,16 @@ class XhtmlTransformation:
                 element.set(key,text)
         return element
     commonAttributeChange = classmethod(commonAttributeChange)
-    def changeNsmap(cls,tree,key):
+    def changeNsmap(cls,tree,keys):
         """update nameSpace map """
         root=tree.getroot()
         NSMAP=root.nsmap
-        NSMAP[key]="http://richfaces.org/rich"
+        for key,ns in keys:
+            NSMAP[key]=ns;
         root=XhtmlTransformation.newXhtml(root)
         newRoot = ET.Element(root.tag, nsmap=NSMAP)
-        
         for key,value in root.attrib.items():
             newRoot.set(key,value)
-        
         newRoot.text=root.text
         for element in root:
             newRoot.append(element)
@@ -114,5 +113,13 @@ class XhtmlTransformation:
                 element=RichElement.componantChange(element)
             elif(XhtmlTransformation.isA4J(element.tag)):
                 element=A4jElement.componantChange(element,filePath)
+            # elif(element.tag is ET.Comment):
+            #     if('rich:spacer xmlns:rich="http://richfaces.org/rich"' in element.text):
+            #         element1=ET.fromstring(element.text)
+            #         element1.tag="{http://www.ihe.net/gazellecdk}spacer"
+            #         parent=element.getparent()
+            #         parent.insert(parent.index(element),element1)
+            #         parent.remove(element)
+
         tree.write(filePath,pretty_print=True,encoding='utf-8')
     upgrade=classmethod(upgrade)

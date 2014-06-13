@@ -26,7 +26,7 @@ class RichElement:
         if (element.tag== cls.richNs+"ajaxValidator"):
             element.tag=cls.richNs+"validator"
         elif (element.tag== cls.richNs+"beanValidator"):
-            element.tag==cls.hNs+"validateBean"
+            element.tag=cls.hNs+"validateBean"
             # comment=ET.Comment(ET.tostring(element))
             # parent=element.getparent()
             # parent.insert(parent.index(element),comment)
@@ -47,7 +47,8 @@ class RichElement:
             print("colorPicker not implemented (custom component)")
         elif (element.tag== cls.richNs+"comboBox"):
             element.tag=cls.richNs+"select"
-            print ("autoComplete Unified version of suggestionBox and comboBox from 3.3.x.")
+            element.set("enableManualInput","true")
+            print ("select Unified version of suggestionBox and comboBox from 3.3.x.")
         elif (element.tag== cls.richNs+"editor"):
             print ("not sure if editor works")
         elif (element.tag== cls.richNs+"fileUpload"):
@@ -74,7 +75,7 @@ class RichElement:
         elif (element.tag== cls.richNs+"separator"):
             element.tag=cls.xhtmlNs+"hr"
         elif (element.tag== cls.richNs+"simpleTogglePanel"):
-            element.tag==cls.richNs+"collapsiblePanel"
+            element.tag=cls.richNs+"collapsiblePanel"
         elif (element.tag in [cls.richNs+"tabPanel",cls.richNs+"tab"]):
             element=RichElement.migrateValueChangeAttribute(element)
         elif (element.tag== cls.richNs+"togglePanel"):
@@ -161,13 +162,7 @@ class RichElement:
             parent.remove(element)
             print ("gmap : not implemented")
         elif(element.tag==cls.richNs+"insert"):
-            element.tag="{http://richfaces.org/sandbox/syntaxhighlighter}syntaxhighlighter"
-            insertContent=element.get("content")
-            highlight=element.get("highlight")
-            element.set("language",highlight)
-            element.text=insertContent
-            element.attrib.pop("highlight")
-            element.attrib.pop("content")
+            element.tag="{http://www.ihe.net/gazellecdk}insert"
         elif(element.tag==cls.richNs+"page"):
             comment=ET.Comment(ET.tostring(element))
             parent=element.getparent()
@@ -181,10 +176,6 @@ class RichElement:
             parent.remove(element)
             print ("virtualEarth : not implemented")
         elif(element.tag==cls.richNs+"spacer"):
-            comment=ET.Comment(ET.tostring(element))
-            parent=element.getparent()
-            parent.insert(parent.index(element),comment)
-            parent.remove(element)
-            print ("spacer : not implemented")
+            element.tag="{http://www.ihe.net/gazellecdk}insert"
         return element
     componantChange=classmethod(componantChange)
