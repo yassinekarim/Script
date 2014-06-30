@@ -62,7 +62,12 @@ class XhtmlTransformation:
                 element.attrib.pop("process")
             elif(key=="event"):
                 if value.startswith("on"):
-                    element.set(key,value[2:])
+                    value=value[2:]
+                    element.set(key,value)
+                if value=="viewactivated":
+                    element.set(key,"change")
+                if value=="changedevent":
+                    element.set(key,"change")
             elif(key.startswith("on")or key=="href"):
                 text=element.get(key)
                 text=cls.replaceModalPanel(text,"show",filePath,element,tree)
