@@ -58,6 +58,11 @@ class A4jElement:
             print ("a4j:AjaxListener removed didn't replaced yet")
         elif (element.tag== cls.a4jNs+"support"):
             element.tag=cls.a4jNs+"ajax"
+            action=element.get("action")
+            if(action):
+                element.set("listener",action)
+                element.attrib.pop("action")
+            
         elif (element.tag== cls.a4jNs+"push"):
             print ("a4j:push not supported yet")
         elif (element.tag== cls.a4jNs+"status"):
@@ -66,7 +71,6 @@ class A4jElement:
             if(element.get("popup")):
                 element.set("mode","popup")
                 element.attrib.pop("popup")
-                print ("popup attribute renamed to mode")
         elif (element.tag== cls.a4jNs+"outputPanel"):
             if(element.get("layout")=="none"):
                 element.attrib.pop(layout)

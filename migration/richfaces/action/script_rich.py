@@ -84,7 +84,7 @@ class RichElement:
             element.tag=cls.richNs+"togglePanelItem"
             element=RichElement.migrateValueChangeAttribute(element)
         elif (element.tag== cls.richNs+"toggleControl"):
-            element=RichElement.MigrateValueChangeAttribute(element)
+            element=RichElement.migrateValueChangeAttribute(element)
         elif (element.tag== cls.richNs+"toolBar"):
             element.tag=cls.richNs+"toolbar"
         elif (element.tag== cls.richNs+"toolBarGroup"):
@@ -127,7 +127,14 @@ class RichElement:
         elif (element.tag== cls.richNs+"datascroller"):
             element.tag=cls.richNs+"dataScroller"
         elif (element.tag== cls.richNs+"dataTable"):
-            print ("dataTable : built i sorting/filtering not suppored")
+            for child in element:
+                if(child.tag==cls.richNs+"column"):
+                    child.tag="{http://www.ihe.net/gazelle}column"
+                    sortOrder=child.get("sortOrder")
+                    if(sortOrder):
+                        child.set("sortOrder",sortOrder.lower())
+                    if(child[0].tag=="{http://java.sun.com/jsf/core}facet"):
+                        child[0].tag="{http://java.sun.com/jsf/facelets}define"
         elif(element.tag==cls.richNs+"subTable"):
             element.tag=cls.richNs+"collapsibleSubTable"
         elif(element.tag==cls.richNs+"scrollableDataTable"):
