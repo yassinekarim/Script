@@ -22,11 +22,11 @@ class RichElement:
 
     def componantChange(cls,element):
         """migrate rich components """
-        #richfaces Valisation
+        #richfaces Validation
         if (element.tag== cls.richNs+"ajaxValidator"):
             element.tag=cls.richNs+"validator"
         elif (element.tag== cls.richNs+"beanValidator"):
-            element.tag=cls.hNs+"validateBean"
+            element.tag="{http://java.sun.com/jsf/core}validateBean"
             # comment=ET.Comment(ET.tostring(element))
             # parent=element.getparent()
             # parent.insert(parent.index(element),comment)
@@ -91,6 +91,17 @@ class RichElement:
             element.tag=cls.richNs+"toolbarGroup"
         elif (element.tag== cls.richNs+"toolTip"):
             element.tag=cls.richNs+"tooltip"
+        #Rich Menu Components
+        elif (element.tag== cls.richNs+"menuItem"):
+            if(element.get("value")):
+                element.set("label",element.get("value"))
+                element.attrib.pop("value")
+        elif (element.tag== cls.richNs+"menuGroup"):
+            if(element.get("value")):
+                element.set("label",element.get("value"))
+                element.attrib.pop("value")
+        elif (element.tag== cls.richNs+"menuSeparator"):
+            pass
         #Rich Ordering Components
         elif (element.tag== cls.richNs+"listShuttle"):
             element.tag=cls.richNs+"pickList"
@@ -101,8 +112,6 @@ class RichElement:
             element.tag=cls.richNs+"column"
         elif (element.tag== cls.richNs+"columnGroup"):
             element.tag=cls.richNs+"columnGroup"
-        elif (element.tag== cls.richNs+"column"):
-            element.tag=cls.richNs+"column"
         elif (element.tag== cls.richNs+"columns"):
             comment=ET.Comment(ET.tostring(element))
             parent=element.getparent()
