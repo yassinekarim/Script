@@ -11,7 +11,7 @@ class JavaTransformation:
     getReplacemetList=classmethod(getReplacemetList)
     def addMethod(cls,content):
         """add getId method to class wich extend's HibernateDataModel"""
-        regexList=["FilterDataModel[\s]*<.+>","HibernateDataModel[\s]*<.+>"]
+        regexList=["extend[\s]*FilterDataModel[\s]*<.+>","extend[\s]*HibernateDataModel[\s]*<.+>","new[\s]*FilterDataModel[\s]*<.+>","new[\s]*HibernateDataModel[\s]*<.+>"]
         for reg in regexList:
             regex = re.compile(reg)  #!!!!!!!!!!!!!!!!! problem multiple match !!!!!!!!!!!!!!!!!!!!!!!!!!! 
             result= regex.search(content)
@@ -20,13 +20,25 @@ class JavaTransformation:
                 classMatch=match[match.find('<')+1:match.__len__()-1]
                 classMatch=classMatch.strip()
                 if (classMatch.__len__()>1):
-                    fin=content.rfind('}')
-                    content=content[:fin]+"""@Override
-    protected Object getId("""+classMatch+""" t) {
-        // TODO Auto-generated method stub
-        return t.getId();
-    }""" +content[fin-1:]
-    
+                    if("extend" in match):
+                        fin=content.rfind('}')
+                        content=content[:fin]+"""@Override
+        protected Object getId("""+classMatch+""" t) {
+            // TODO Auto-generated method stub
+            return t.getId();
+        }""" +content[fin-1:]
+                    else:
+                        debut,fin=result.span()
+                        index=content[fin:].find(";")
+                        content=content[:fin+index-1]+"""{
+                        @Override
+        protected Object getId("""+classMatch+""" t) {
+            // TODO Auto-generated method stub
+            return t.getId();
+        }
+        }"""+content[fin+index:]
+
+
         return content
     addMethod=classmethod(addMethod)
     def upgradeCode(cls,content):
