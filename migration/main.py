@@ -1,10 +1,12 @@
 #!/opt/python3/bin/python3 
 # -*-coding:utf-8 -*
 import os
+import subprocess
 from migration.java.action.script_java import JavaTransformation 
 from migration.jsf.script_jsf import XhtmlTransformation
 from migration.persistence.script_persistence import PersistenceMigration
 from migration.web.script_web import WebMigration
+from migration.web.script_facesConfig import FaceConfigMigration
 from migration.components.action.script_component import ComponentsMigration
 from migration.pom.action.script_pom import PomMigration
 from lxml import etree as ET
@@ -21,7 +23,13 @@ class Main:
         root = tree.getroot()
         tree.write(filePath,pretty_print=True,encoding='utf-8')
     changeDefinition=classmethod(changeDefinition)
-
+    def addDeploymentStructure():
+        script_dir = os.path.dirname(__file__)
+        source=script_dir+"/jboss-deployment-structure.xml"
+        earPath=input('please enter the absolute path of src/application of the ear project')
+        subprocess.call(["mkdir","-p",earPath+"/META-INF"])
+        subprocess.call(["cp",source,earPath+"/META-INF"])
+    addDeploymentStructure=classmethod(addDeploymentStructure)
     def walk(cls,inputPath):
         isEar=False
         for path, dirs, files in os.walk(inputPath):
@@ -41,9 +49,10 @@ class Main:
                         tmp=PomMigration.parseXml(filepath)
                         isEar=isEar or tmp 
                     elif(filepath.endswith("faces-config.xml")):
-                        Main.changeDefinition(filepath)
+                       FaceConfigMigration.parse(filepath)
                     elif(filepath.endswith("pages.xml")):
                         Main.changeDefinition(filepath)
         if(isEar):
+            cls.addDeploymentStructure()
             ComponentsMigration.addComponents(inputPath)
     walk=classmethod(walk)
