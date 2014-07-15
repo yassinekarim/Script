@@ -1,4 +1,4 @@
-#!/opt/python3/bin/python3 
+#!/opt/python3/bin/python3
 # -*-coding:utf-8 -*
 from lxml import etree as ET
 from migration.richfaces.action.script_rich import RichElement
@@ -66,7 +66,7 @@ class XhtmlTransformation:
                     element.set(key,value)
                 if value=="viewactivated":
                     element.set(key,"change")
-                if value=="changedevent":
+                if value=="changed":
                     element.set(key,"change")
             elif(key.startswith("on")or key=="href"):
                 text=element.get(key)
@@ -118,6 +118,11 @@ class XhtmlTransformation:
                 element=RichElement.componantChange(element)
             elif(XhtmlTransformation.isA4J(element.tag)):
                 element=A4jElement.componantChange(element,filePath)
+            elif (element.tag==  "{http://java.sun.com/jsf/facelets}include"):
+                src=element.get("viewId")
+                if(src):
+                    element.set("src",src)
+                    element.attrib.pop("viewId")
             # elif(element.tag is ET.Comment):
             #     if('rich:spacer xmlns:rich="http://richfaces.org/rich"' in element.text):
             #         element1=ET.fromstring(element.text)

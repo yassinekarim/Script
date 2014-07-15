@@ -1,4 +1,4 @@
-#!/opt/python3/bin/python3 
+#!/opt/python3/bin/python3
 # -*-coding:utf-8 -*
 from lxml import etree as ET
 
@@ -109,7 +109,12 @@ class RichElement:
     Note: The sourceList is not longer mutable, and is available only by subtraacting the target list from thh complete list.""")
         #Rich Iteration Components
         elif (element.tag== cls.richNs+"column"):
-            element.tag=cls.richNs+"column"
+            element.tag="{http://www.ihe.net/gazelle}column"
+            sortOrder=element.get("sortOrder")
+            if(sortOrder):
+                element.set("sortOrder",sortOrder.lower())
+            if(element[0].tag=="{http://java.sun.com/jsf/core}facet"):
+                element[0].tag="{http://java.sun.com/jsf/facelets}define"
         elif (element.tag== cls.richNs+"columnGroup"):
             element.tag=cls.richNs+"columnGroup"
         elif (element.tag== cls.richNs+"columns"):
@@ -136,14 +141,7 @@ class RichElement:
         elif (element.tag== cls.richNs+"datascroller"):
             element.tag=cls.richNs+"dataScroller"
         elif (element.tag== cls.richNs+"dataTable"):
-            for child in element:
-                if(child.tag==cls.richNs+"column"):
-                    child.tag="{http://www.ihe.net/gazelle}column"
-                    sortOrder=child.get("sortOrder")
-                    if(sortOrder):
-                        child.set("sortOrder",sortOrder.lower())
-                    if(child[0].tag=="{http://java.sun.com/jsf/core}facet"):
-                        child[0].tag="{http://java.sun.com/jsf/facelets}define"
+            pass
         elif(element.tag==cls.richNs+"subTable"):
             element.tag=cls.richNs+"collapsibleSubTable"
         elif(element.tag==cls.richNs+"scrollableDataTable"):

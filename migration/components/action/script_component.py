@@ -1,4 +1,4 @@
-#!/opt/python3/bin/python3 
+#!/opt/python3/bin/python3
 # -*-coding:utf-8 -*
 from lxml import etree as ET
 from migration.utils.change_definition import ChangeDefinition
@@ -9,7 +9,6 @@ import subprocess
 class ComponentsMigration:
     """component.xml migration """
     def parseXml(cls,filePath):
-        """"""
         cls.componentsFilePath.append(filePath)
         parser = ET.XMLParser(remove_blank_text=True)
         tree = ET.parse(filePath,parser)

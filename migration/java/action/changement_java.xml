@@ -6,13 +6,13 @@
 	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?NotEmpty[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.NotEmpty"/>
 	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?NotNull[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.NotNull"/>
 	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Length[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Size"/>
-	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Email[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Email"/>
+	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Email[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@	org.hibernate.validator.constraints.Email"/>
 	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Min[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Min"/>
 	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Max[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Max"/>
 	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Pattern[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Pattern">
 		<mapping old="regex" new="regexp"/>
 	</annotation>
-	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Range[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Range"/>
+	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Range[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@org.hibernate.validator.constraints.Range"/>
 	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Past[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Past"/>
 	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Valid[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Valid"/>
 	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?CreditCardNumber[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.CreditCardNumber"/>
@@ -23,6 +23,7 @@
 	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Future[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Future"/>
 	<class regex="(org.richfaces.model.)?UploadItem(?!;)" replacement="org.richfaces.model.UploadedFile">
 		<method regex="getUploadItem"/>
+		<method regex="getFileName"/>
 	</class>
 	<class regex="(org.richfaces.model.)?Ordering(?!;)" replacement="org.richfaces.component.SortOrder">
 		<mapping old="ASCENDING" new="ascending"/>
@@ -32,6 +33,6 @@
 	        
 	<class regex="(org.richfaces.event.)?UploadEvent(?!;)" replacement="org.richfaces.event.FileUploadEvent"/>
 	
-	
+	<method regex="getFileName" replacement="getName()"/>
 	<method regex="getUploadItem" replacement="getUploadedFile"/>
 </java>

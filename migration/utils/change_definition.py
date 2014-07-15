@@ -16,12 +16,13 @@ class ChangeDefinition:
     def convert(cls,namespace):
         """change old xmlns to new one """
         namespace=str(namespace)
-        if re.match("http://jboss.com/products/seam/", namespace):       
-            return namespace.replace("http://jboss.com/products/seam/","http://jboss.org/schema/seam/")
+        if re.search("jboss.com/products/seam/", namespace):       
+            return namespace.replace("jboss.com/products/seam/","jboss.org/schema/seam/")
         elif("http://www.w3.org/2001/XMLSchema-instance"==namespace):
             return namespace
         else:
             print("erreur namespace")
+            return namespace
     convert=classmethod(convert)
     def changeDefSeam(cls,page,tree):
         """change definition of pages.xml and components.xml"""
@@ -31,6 +32,7 @@ class ChangeDefinition:
         NSMAP = {None : COMPONENT_NAMESPACE} 
         for key in root.nsmap.keys():
             NSMAP[key]=cls.convert(root.nsmap[key])
+        print (COMPONENT + page)
         newRoot = ET.Element(COMPONENT + page, nsmap=NSMAP)
         newRoot.set('{http://www.w3.org/2001/XMLSchema-instance}schemaLocation',root.get('{http://www.w3.org/2001/XMLSchema-instance}schemaLocation').replace("http://jboss.com/products/seam/","http://jboss.org/schema/seam/").replace("2.2","2.3"))
         root=cls.newXml(root)

@@ -1,4 +1,4 @@
-#!/opt/python3/bin/python3 
+#!/opt/python3/bin/python3
 # -*-coding:utf-8 -*
 from lxml import etree as ET
 import os
@@ -8,6 +8,7 @@ class A4jElement:
     """"upgrade a4j tag"""
     a4jNs="{http://richfaces.org/a4j}"
     hNs="{http://java.sun.com/jsf/html}"
+    uiNs="{http://java.sun.com/jsf/facelets}"
     def parseSrc(cls,src):
         listStr=src.split('/')
         name=listStr.pop() #  remove and return the last elemen of the list
@@ -61,8 +62,13 @@ class A4jElement:
             action=element.get("action")
             if(action):
                 element.set("listener",action)
-                element.attrib.pop("action")
-            
+                element.attrib.pop("actionparam")
+        elif (element.tag== cls.a4jNs+"include"):
+            element.tag=cls.uiNs+"include"
+            src=element.get("viewId")
+            if(src):
+                element.set("src",src)
+                element.attrib.pop("viewId")
         elif (element.tag== cls.a4jNs+"push"):
             print ("a4j:push not supported yet")
         elif (element.tag== cls.a4jNs+"status"):

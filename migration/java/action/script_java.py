@@ -1,4 +1,4 @@
-#!/opt/python3/bin/python3 
+#!/opt/python3/bin/python3
 # -*-coding:utf-8 -*
 from migration.java.model.replacement import MethodReplacement
 import re
@@ -11,7 +11,7 @@ class JavaTransformation:
     getReplacemetList=classmethod(getReplacemetList)
     def addMethod(cls,content):
         """add getId method to class wich extend's HibernateDataModel"""
-        regexList=["extend[\s]*FilterDataModel[\s]*<.+>","extend[\s]*HibernateDataModel[\s]*<.+>","new[\s]*FilterDataModel[\s]*<.+>","new[\s]*HibernateDataModel[\s]*<.+>"]
+        regexList=["extends[\s]*FilterDataModel[\s]*<.+>","extends[\s]*HibernateDataModel[\s]*<.+>","new[\s]*FilterDataModel[\s]*<.+>","new[\s]*HibernateDataModel[\s]*<.+>"]
         for reg in regexList:
             regex = re.compile(reg)  #!!!!!!!!!!!!!!!!! problem multiple match !!!!!!!!!!!!!!!!!!!!!!!!!!! 
             result= regex.search(content)

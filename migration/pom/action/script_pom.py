@@ -65,7 +65,7 @@ class PomMigration:
         root=tree.getroot()
         artifactIdTag=root.find("xmlns:artifactId",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'})
         if(artifactIdTag.text!=artifactId):
-            print ("error: in "+filePath+"/pom.xml  expected artifactId "+artifactId+" found "+artifactIdTag.text)
+            print ("error: in "+filePath+"  expected artifactId "+artifactId+" found "+artifactIdTag.text)
             return ""
         version=root.find("xmlns:version",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'})
         if (version is not None):
