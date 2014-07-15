@@ -25,7 +25,9 @@ class ComponentsMigration:
                     root.remove(element)
                     root.insert(2, init)
             elif(element.tag=="{http://jboss.org/schema/seam/persistence}managed-persistence-context"):
-                element.set("persistence-unit-jndi-name",JndiMigration.changeJndi(element.get("persistence-unit-jndi-name"),"jboss"))
+                jndi=element.get("persistence-unit-jndi-name")
+                if jndi is not None:
+                    element.set("persistence-unit-jndi-name",JndiMigration.changeJndi(jndi,"jboss"))
         tree.write(filePath,pretty_print=True,encoding='utf-8')
     parseXml=classmethod(parseXml)
     componentsFilePath=list()

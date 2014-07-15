@@ -6,7 +6,7 @@
 	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?NotEmpty[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.NotEmpty"/>
 	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?NotNull[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.NotNull"/>
 	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Length[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Size"/>
-	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Email[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@	org.hibernate.validator.constraints.Email"/>
+	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Email[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@org.hibernate.validator.constraints.Email"/>
 	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Min[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Min"/>
 	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Max[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Max"/>
 	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Pattern[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Pattern">
@@ -30,8 +30,8 @@
 		<mapping old="DESCENDING" new="descending"/>
 		<mapping old="UNSORTED" new="unsorted"/>
 	</class>
-	        
-	<class regex="(org.richfaces.event.)?UploadEvent(?!;)" replacement="org.richfaces.event.FileUploadEvent"/>
+	<class regex="(org.richfaces.event.)?UploadEvent(?!;)" replacement="org.richfaces.event.FileUploadEvent"/>     
+	<class regex="(org.hibernate.engine.)?SessionFactoryImplementor(?!;)" replacement="org.hibernate.engine.spi.SessionFactoryImplementor"/>
 	
 	<method regex="getFileName" replacement="getName()"/>
 	<method regex="getUploadItem" replacement="getUploadedFile"/>

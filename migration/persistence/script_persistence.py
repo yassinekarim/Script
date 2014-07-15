@@ -15,7 +15,7 @@ class PersistenceMigration:
             if (persistenceUnit.tag=="{http://java.sun.com/xml/ns/persistence}persistence-unit"):
                 for element in persistenceUnit:
                     if(element.tag=="{http://java.sun.com/xml/ns/persistence}jta-data-source"):
-                        element.text=JndiMigration.changeJndi(element.text,"jboss")
+                        element.text=JndiMigration.changeJndiDS(element.text,"jboss")
                     elif(element.tag=="{http://java.sun.com/xml/ns/persistence}properties"):
                         for prop in element:
                             if(prop.get("name")=="jboss.entity.manager.factory.jndi.name"):

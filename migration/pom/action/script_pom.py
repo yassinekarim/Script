@@ -6,7 +6,10 @@ import os
 basestring = (str,bytes)
 
 class PomMigration:
-
+    pluginVersionList=None
+    def getPluginVersionList(cls):
+        return cls.pluginVersionList
+    getPluginVersionList=classmethod(getPluginVersionList)
     def createDep(cls,groupId,artifactId,version,scope):
         """create a new dependencies element """
         newdep = ET.Element("{http://maven.apache.org/POM/4.0.0}dependency")    
@@ -103,20 +106,41 @@ class PomMigration:
     getProjectPath=classmethod(getProjectPath)
     def parseXml(cls,filePath):
         """parse pom.xml to change dependecies version"""
-        print(filePath)
         parser = ET.XMLParser(remove_blank_text=True)
         tree = ET.parse(filePath,parser)
         root = tree.getroot()
         dependencies=root.findall("xmlns:dependencies/xmlns:dependency", namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'})
+        plugins=root.findall("xmlns:build/xmlns:plugins/xmlns:plugin", namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'})
         richfaces=False
         jsfImpl=False
         isEar=False
         packaging=root.find("{http://maven.apache.org/POM/4.0.0}packaging")
         if (not (packaging is None) and packaging.text=="ear"):
             isEar=True
+        for element in plugins:
+            if isinstance(element.tag, basestring):
+                artifactId=element.find("xmlns:artifactId",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'}).text
+                for plugin in cls.pluginVersionList:
+                    if(plugin.artifactId==artifactId):
+                        plugin.executeReplace(element)
+                        break
+                if(artifactId=="maven-ear-plugin"):
+                    configuration=element.find("xmlns:configuration",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'})
+                    jboss=configuration.find("xmlns:jboss",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'})
+                    version=jboss.find("xmlns:version",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'})
+                    if(version.text=="5"):
+                        version.text="6"
+                    configuration.append(version)
+                    configuration.remove(jboss)
         for element in dependencies:
             if isinstance(element.tag, basestring):
-                if("org.richfaces." in element.find("xmlns:groupId",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'}).text):
+                if ("org.apache.maven.plugins" in element.find("xmlns:groupId",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'}).text):
+                    artifactId=element.find("xmlns:artifactId",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'}).text
+                    for plugin in pluginVersionList:
+                        if(plugin.artifactId==artifactId):
+                            plugin.executeReplace(element)
+                            break
+                elif("org.richfaces." in element.find("xmlns:groupId",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'}).text):
                     parent=element.getparent()
                     if(not richfaces):
                         newdep=cls.newDep(element,"org.richfaces.ui","richfaces-components-ui","4.3.6.Final")

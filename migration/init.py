@@ -4,7 +4,9 @@ import os
 import sys
 from migration.main import Main
 from migration.java.action.confReader import ConfigurationReader
-from migration.java.action.script_java import JavaTransformation 
+from migration.java.action.script_java import JavaTransformation
+from migration.pom.action.script_pom import PomMigration
+from migration.pom.action.pluginVersionReader import PluginVersionReader
 size = len(sys.argv)
 if size == 1 or size > 2:
     print ("Usage: script_java.py project_folder")
@@ -17,5 +19,5 @@ if not os.path.isdir(inputPath):
     print (inputPath+" isn't a dir")
     sys.exit(1)
 JavaTransformation.replacementList=ConfigurationReader.initList()
-
+PomMigration.pluginVersionList=PluginVersionReader.initList()
 Main.walk(inputPath)
