@@ -40,6 +40,7 @@ class WebMigration:
                         root.remove(element)
                     else:
                         paramName.text="org.richfaces.resourceOptimization.enabled"
+                        ressourceOptimisation=True
                         if(paramValue.text=="ALL"):
                             paramValue.text="true"
                         else:
