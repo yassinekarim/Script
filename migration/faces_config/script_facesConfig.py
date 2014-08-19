@@ -15,6 +15,5 @@ class FaceConfigMigration:
                 view=element.find("{http://java.sun.com/xml/ns/javaee}view-handler")
                 if(view is not None):
                     element.remove(view)
-                    print(" aaaaaaaaaaaaaaa")
         tree.write(filePath,pretty_print=True,encoding='utf-8', xml_declaration=True)
     parseXml=classmethod(parseXml)

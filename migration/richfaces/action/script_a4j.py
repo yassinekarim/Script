@@ -9,6 +9,8 @@ class A4jElement:
     a4jNs="{http://richfaces.org/a4j}"
     hNs="{http://java.sun.com/jsf/html}"
     uiNs="{http://java.sun.com/jsf/facelets}"
+    subviewId=0
+
     def parseSrc(cls,src):
         listStr=src.split('/')
         name=listStr.pop() #  remove and return the last elemen of the list
@@ -45,7 +47,6 @@ class A4jElement:
         os.chdir(oldPath)
         element.set("library",library)
         element.set("name",name)
-
     ressourceUpdate=classmethod(ressourceUpdate)
     def componantChange(cls,element,filePath):
         """migrate a4j tag"""
@@ -59,20 +60,49 @@ class A4jElement:
             print ("a4j:AjaxListener removed didn't replaced yet")
         elif (element.tag== cls.a4jNs+"support"):
             element.tag=cls.a4jNs+"ajax"
-            action=element.get("action")
-            if(action):
-                element.set("listener",action)
-                element.attrib.pop("actionparam")
+            onRowMouseOver=element.get("onRowMouseOver")
+            onclick=element.get("onclick")
+            Id=element.get("id")
+            if(onRowMouseOver or onclick or Id is not None):
+                element.tag=cls.a4jNs+"commandLink"
+                parent=element.getparent()
+                gparent=parent.getparent()
+                gparent.insert(gparent.index(parent),element)
+                element.append(parent)
+                element.attrib.pop("event")
+            else:
+                action=element.get("action") or element.get("actionListener")
+                if(action):
+                    element.set("listener",action)
+                    element.attrib.pop("action")
+                onsubmit=element.get("onsubmit")
+                if(onsubmit is not None): 
+                    element.set("onbegin",onsubmit)
+                    element.attrib.pop("onsubmit")
+                for child in element:
+                    if(child.tag=={"{http://java.sun.com/jsf/core}setPropertyActionListener"):
+                        child.tag=cls.a4jNs+"param"
+                        target=child.get("target")
+                        if(target is not None):
+                            element.set("assignTo",target)
+                            element.attrib.pop("target") 
         elif (element.tag== cls.a4jNs+"include"):
+            subview=ET.Element("{http://java.sun.com/jsf/core}subview")
+            subview.set("id","subview_"+str(cls.subviewId))
+            cls.subviewId+=1
             element.tag=cls.uiNs+"include"
             src=element.get("viewId")
             if(src):
                 element.set("src",src)
-                element.attrib.pop("viewId")
+                element.attrib.pop("viewId") 
+            parent=element.getparent()
+            parent.insert(parent.index(element),subview)
+            subview.append(element)
+            # parent.remove(element)
         elif (element.tag== cls.a4jNs+"push"):
-            print ("a4j:push not supported yet")
+            pass
         elif (element.tag== cls.a4jNs+"status"):
-            print ("a4j:staus upgrade not yet implemented")
+            pass
         elif (element.tag== cls.a4jNs+"log"):
             if(element.get("popup")):
                 element.set("mode","popup")

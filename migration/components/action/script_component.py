@@ -28,7 +28,7 @@ class ComponentsMigration:
                 jndi=element.get("persistence-unit-jndi-name")
                 if jndi is not None:
                     element.set("persistence-unit-jndi-name",JndiMigration.changeJndi(jndi,"jboss"))
-        tree.write(filePath,pretty_print=True,encoding='utf-8')
+        tree.write(filePath,pretty_print=True,encoding='utf-8',xml_declaration=True)
     parseXml=classmethod(parseXml)
     componentsFilePath=list()
     def addComponents(cls,projectPath):
@@ -36,9 +36,9 @@ class ComponentsMigration:
         oldPath = os.getcwd()
         absoluteProjectPath=os.path.abspath(projectPath)
         os.chdir(projectPath)
-        print ("begin mvn clean package"+absoluteProjectPath)
-        subprocess.call(["mvn","clean","package"], shell=True)
-        print ("end mvn clean package")
+        # print ("begin mvn clean package"+absoluteProjectPath)
+        # subprocess.call(["mvn","clean","package"], shell=True)
+        # print ("end mvn clean package")
         earPath = input("Saisissez le chemin vers l'ear ( . = {} ): ".format(absoluteProjectPath))
         jbossHome = input("Saisissez le chemin absolu vers Jboss7 et assurez vous que le serveur est stoppé: ")
         subprocess.call(["cp",earPath,jbossHome+"/standalone/deployments"], shell=True)

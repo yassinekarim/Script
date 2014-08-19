@@ -127,11 +127,13 @@ class PomMigration:
                 if(artifactId=="maven-ear-plugin"):
                     configuration=element.find("xmlns:configuration",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'})
                     jboss=configuration.find("xmlns:jboss",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'})
-                    version=jboss.find("xmlns:version",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'})
-                    if(version.text=="5"):
-                        version.text="6"
-                    configuration.append(version)
-                    configuration.remove(jboss)
+                    if (jboss is not None):
+                        version=jboss.find("xmlns:version",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'})
+                        if(version is not None):
+                            if(version.text=="5"):
+                                version.text="6"
+                            configuration.append(version)
+                        configuration.remove(jboss)
         for element in dependencies:
             if isinstance(element.tag, basestring):
                 if ("org.apache.maven.plugins" in element.find("xmlns:groupId",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'}).text):
@@ -201,9 +203,7 @@ class PomMigration:
                     artifactId=element.find("xmlns:artifactId",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'})
                     version=element.find("xmlns:version",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'})
                     depType=element.find("xmlns:type",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'})
-                    if(depType is not None and depType.text=="jar"):
-                        pass
-                    else:
+                    if(depType is not None and depType.text=="ejb"):
                         isMigrated=input('is the project with artifactId='+artifactId.text+' already migrated (y/n) [y]')or 'y'
                         while(isMigrated!='y'and isMigrated!='n'):
                             print('incorect input try again:')
@@ -217,6 +217,6 @@ class PomMigration:
                             projectPath=cls.getProjectPath(artifactId.text)
                             print(projectPath)
                             Main.walk(projectPath)
-        tree.write(filePath,pretty_print=True,encoding='utf-8')
+        tree.write(filePath,pretty_print=True,encoding='utf-8',xml_declaration=True)
         return isEar
     parseXml=classmethod(parseXml)

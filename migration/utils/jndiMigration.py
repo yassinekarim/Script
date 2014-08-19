@@ -34,4 +34,4 @@ class JndiMigration:
             return "java:"+scope+"/datasources"+jndiString
         else:
             return "java:"+scope+"/datasources/"+jndiString
-    changeJndi = classmethod(changeJndi)
+    changeJndiDS = classmethod(changeJndiDS)

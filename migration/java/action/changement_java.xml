@@ -1,7 +1,7 @@
 <java>
 	<annotation  regex="^[\t ]*@[\s]*(org.hibernate.annotations.)?CollectionOfElements[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.persistence.ElementCollection" >
 		<mapping old="targetElement" new="targetClass"/>
-		<mapping old="fetch" new="fech"/>
+		<mapping old="fetch" new="fetch"/>
 	</annotation>
 	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?NotEmpty[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.NotEmpty"/>
 	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?NotNull[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.NotNull"/>
@@ -21,6 +21,7 @@
 		<mapping old="fractionDigits" new="fraction"/>
 	</annotation>
 	<annotation regex="^[\t ]*@[\s]*(org.hibernate.validator.)?Future[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.validation.constraints.Future"/>
+	<annotation regex="^[\t ]*@[\s]*(org.jboss.seam.annotations.)?Startup[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?" replacement="@javax.ejb.Startup"/>
 	<class regex="(org.richfaces.model.)?UploadItem(?!;)" replacement="org.richfaces.model.UploadedFile">
 		<method regex="getUploadItem"/>
 		<method regex="getFileName"/>
@@ -30,9 +31,12 @@
 		<mapping old="DESCENDING" new="descending"/>
 		<mapping old="UNSORTED" new="unsorted"/>
 	</class>
+	<class regex="(org.hibernate.type.)?Hibernate(?!;)" replacement="org.hibernate.type.StandardBasicTypes.StandardBasicTypes"/> 
 	<class regex="(org.richfaces.event.)?UploadEvent(?!;)" replacement="org.richfaces.event.FileUploadEvent"/>     
 	<class regex="(org.hibernate.engine.)?SessionFactoryImplementor(?!;)" replacement="org.hibernate.engine.spi.SessionFactoryImplementor"/>
-	
+	<class regex="(org.richfaces.component.xml.)?XmlTreeDataBuilder(?!;)" replacement="net.ihe.gazelle.common.tree.XmlTreeDataBuilder"/>
+	<class regex="(org.richfaces.model.)?TreeNodeImpl(?!;)" replacement="net.ihe.gazelle.common.tree.GazelleTreeNodeImpl"/>
+	<class regex="(org.richfaces.component.xml.)?XmlNodeData(?!;)" replacement="net.ihe.gazelle.common.tree.XmlNodeData"/>
 	<method regex="getFileName" replacement="getName()"/>
 	<method regex="getUploadItem" replacement="getUploadedFile"/>
 </java>

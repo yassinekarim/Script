@@ -15,6 +15,9 @@ class XhtmlTransformation:
                 el.tag=str(el.tag).replace("http://jboss.com/products/seam/taglib","http://jboss.org/schema/seam/taglib")
         return root
     newXhtml = classmethod(newXhtml)
+    doctype=None
+    changeDoctype=False
+
     def isRich(cls,tag):
         """return True  if the tag is a rich:tag"""
         tag=str(tag)
@@ -35,7 +38,9 @@ class XhtmlTransformation:
             else:
                 modalPanel=match[25:vPos]
                 json=match[vPos+1:match.__len__()-2]
+                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                 print(json+" found at element "+tree.getpath(element)+" in "+filePath+" please use  #{rich:component("+modalPanel+")}.resize(width,height);and #{rich:component("+modalPanel+")}.moveTo(top,left); to correct the issue")
+                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                 text=text.replace(match,"#{rich:component("+modalPanel+")}."+show+"()")
             result= re.search("Richfaces\."+show+"ModalPanel\(.*?\)",text)
         return text
@@ -53,10 +58,10 @@ class XhtmlTransformation:
             elif (key=="limitToList"):
                 element.set("limitRender",value)
                 element.attrib.pop("limitToList")
-            elif(key in ["ignoreDupResponse","requestDelay","timeout"]):
-                child = ET.Element("{http://richfaces.org/a4j}attachQueue")
-                child.set(key,value)
-                element.append(child)
+            # elif(key in ["ignoreDupResponse","requestDelay","timeout"]):
+            #     child = ET.Element("{http://richfaces.org/a4j}attachQueue")
+            #     child.set(key,value)
+            #     element.append(child)
             elif(key=="process"):
                 element.set("execute",value)
                 element.attrib.pop("process")
@@ -78,9 +83,12 @@ class XhtmlTransformation:
     def changeNsmap(cls,tree,keys):
         """update nameSpace map """
         root=tree.getroot()
+        cls.doctype=tree.docinfo.doctype
         NSMAP=root.nsmap
         for key,ns in keys:
             NSMAP[key]=ns;
+        NSMAP["g"]="http://www.ihe.net/gazelle"
+        NSMAP["gdk"]="http://www.ihe.net/gazellecdk"
         root=XhtmlTransformation.newXhtml(root)
         newRoot = ET.Element(root.tag, nsmap=NSMAP)
         for key,value in root.attrib.items():
@@ -89,11 +97,15 @@ class XhtmlTransformation:
         for element in root:
             newRoot.append(element)
         tree._setroot(newRoot)
+        if(not tree.docinfo.doctype==cls.doctype):
+            cls.changeDoctype=True
         return tree
     changeNsmap = classmethod(changeNsmap)
     def upgrade(cls, filePath):
         """parse the Xhtml file and apply the change according to the tag"""
         print(filePath)
+        A4jElement.subviewId=1
+        cls.changeDoctype=False
         parser = ET.XMLParser(remove_blank_text=True,resolve_entities=False)
         tree = ET.parse(filePath,parser)
         root=tree.getroot()
@@ -132,4 +144,15 @@ class XhtmlTransformation:
             #         parent.remove(element)
 
         tree.write(filePath,pretty_print=True,encoding='utf-8')
+        if(cls.changeDoctype):
+            cls.addDocType(filePath)
     upgrade=classmethod(upgrade)
+    def addDocType(cls, filePath):
+        f=open(filePath,"r")
+        content = f.read()
+        f.close()
+        content=cls.doctype+"\n"+content
+        f = open(filePath,"w")
+        f.write(content)
+        f.close()
+    addDocType=classmethod(addDocType)

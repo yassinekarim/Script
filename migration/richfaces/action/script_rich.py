@@ -12,14 +12,19 @@ class RichElement:
     def migrateValueChangeAttribute(cls,element):
         """migrate value change attribute a common attribute to some rich tag"""
         if(element.get("ValueChangeListener")):
-            element.set("itemchangeListener",element.get("ValueChangeListner"))
-            element.attrib.pop("itemchangeListener")
+            element.set("itemchangeListener",element.get("ValueChangeListener"))
+            element.attrib.pop("ValueChangeListener")
         if(element.get("ValueChangeEvent")):
             element.set("ItemChangeEvent",element.get("ValueChangeEvent"))
-            element.attrib.pop("ItemChangeEvent")
+            element.attrib.pop("ValueChangeEvent")
         return element
     migrateValueChangeAttribute=classmethod(migrateValueChangeAttribute)
-
+    def getFacetParent(cls,element):
+        parent=element.getparent()
+        while (parent.tag != "{http://java.sun.com/jsf/core}facet"):
+            parent=parent.getparent()
+        return parent
+    getFacetParent=classmethod(getFacetParent)
     def componantChange(cls,element):
         """migrate rich components """
         #richfaces Validation
@@ -31,7 +36,6 @@ class RichElement:
             # parent=element.getparent()
             # parent.insert(parent.index(element),comment)
             # parent.remove(element)
-            print ("summary not supported")
         #richfaces Input Components
         elif (element.tag== cls.richNs+"calendar"):
             # comment=ET.Comment(ET.tostring(element))
@@ -50,15 +54,31 @@ class RichElement:
             element.set("enableManualInput","true")
             print ("select Unified version of suggestionBox and comboBox from 3.3.x.")
         elif (element.tag== cls.richNs+"editor"):
-            print ("not sure if editor works")
+            script=ET.Element("{http://www.w3.org/1999/xhtml}script")
+            script.set("type","text/javascript")
+            script.text="window.CKEDITOR_BASEPATH = '#{request.contextPath}/org.richfaces.resources/javax.faces.resource/org.richfaces.ckeditor/'"
+            parent=element.getparent()
+            parent.insert(0,script)
+            print ("you should configure rich editor manually see home.xhtml in simmulaor common for a sample")
         elif (element.tag== cls.richNs+"fileUpload"):
             pass
         elif (element.tag in [cls.richNs+"inplaceInput",cls.richNs+"inplaceSelect"]):
             if(element.get("onviewactivated")):
                 element.set("onchange",element.get("onviewactivated"))
                 element.attrib.pop("onviewactivated")
-        elif (element.tag== cls.richNs+"suggestionBox"):
+        elif (element.tag== cls.richNs+"suggestionbox"):
             element.tag=cls.richNs+"autocomplete"
+            if(element.get("suggestionAction")):
+                element.set("autocompleteMethod",element.get("suggestionAction"))
+                element.attrib.pop("suggestionAction")
+            selfRendered=element.get("selfRendered")
+            if(selfRendered is not None and selfRendered =="true"):
+                element.set("mode","cachedAjax")
+            else:
+                element.set("mode","ajax")
+            if(selfRendered is not None):
+                element.attrib.pop("selfRendered")
+
             print ("autoComplete Unified version of suggestionBox and comboBox from 3.3.x.")
         #Rich Panel/Output Components
         elif (element.tag== cls.richNs+"modalPanel"):
@@ -70,21 +90,48 @@ class RichElement:
             element.tag=element.tag.replace("panelBar","accordion")
         elif (element.tag== cls.richNs+"panelMenu"):
             if(element.get("ValueChangeListener")):
-                element.set("itemchangeListener",element.get("ValueChangeListner"))
-                element.attrib.pop("itemchangeListener")
+                element.set("itemchangeListener",element.get("ValueChangeListener"))
+                element.attrib.pop("ValueChangeListener")
         elif (element.tag== cls.richNs+"separator"):
             element.tag=cls.xhtmlNs+"hr"
         elif (element.tag== cls.richNs+"simpleTogglePanel"):
             element.tag=cls.richNs+"collapsiblePanel"
-        elif (element.tag in [cls.richNs+"tabPanel",cls.richNs+"tab"]):
+        elif (element.tag == cls.richNs+"tabPanel"):
             element=RichElement.migrateValueChangeAttribute(element)
+        elif (element.tag == cls.richNs+"tab"):
+            element=RichElement.migrateValueChangeAttribute(element)
+            if(element.get("label")):
+                element.set("header",element.get("label"))
+                element.attrib.pop("label")
         elif (element.tag== cls.richNs+"togglePanel"):
             RichElement.migrateValueChangeAttribute(element)
         elif (element.tag== cls.richNs+"facets"):
             element.tag=cls.richNs+"togglePanelItem"
             element=RichElement.migrateValueChangeAttribute(element)
         elif (element.tag== cls.richNs+"toggleControl"):
-            element=RichElement.migrateValueChangeAttribute(element)
+            if(element.get("targetItem") is None):
+                element=RichElement.migrateValueChangeAttribute(element)
+                element.set("targetItem",element.get("switchToState"))
+                element.attrib.pop("switchToState")
+                facet=cls.getFacetParent(element)
+                facet.tag=cls.richNs+"togglePanelItem"
+                iD=element.get("id")
+                style=element.get("style")
+                value=element.get("value")
+                link=ET.Element(cls.hNs+"commandLink")
+                if(iD is not None):
+                    link.set("id",iD)
+                    element.attrib.pop("id")
+                if(style is not None):
+                    link.set("style",style)
+                    element.attrib.pop("style")
+                if(value is not None):
+                    link.set("value",value)
+                    element.attrib.pop("value")
+                parent=element.getparent()
+                parent.insert(parent.index(element),link)
+                link.append(element)
+                # parent.remove(element)
         elif (element.tag== cls.richNs+"toolBar"):
             element.tag=cls.richNs+"toolbar"
         elif (element.tag== cls.richNs+"toolBarGroup"):
@@ -147,6 +194,27 @@ class RichElement:
         elif(element.tag==cls.richNs+"scrollableDataTable"):
             element.tag=cls.richNs+"extendedDataTable"
         #Rich Tree Components
+        elif(element.tag==cls.richNs+"tree"):
+            if(element.get("nodeFace")):
+                element.set("nodeType",element.get("nodeFace"))
+                element.attrib.pop("nodeFace")
+            if(element.get("switchType")):
+                element.set("toggleType",element.get("switchType"))
+                element.attrib.pop("switchType")
+            var=element.get("var")
+            if(var is not None):
+                for child in element.iter():
+                    for key,value in child.attrib.items():
+                        if(child.tag!=cls.richNs+"tree"or key!="var" )
+                        child.attrib[key]=value.replace(var,var+".data")
+            if(element.get("treeNodeVar")):
+                element.set("var",element.get("treeNodeVar"))
+                element.attrib.pop("treeNodeVar")
+        elif(element.tag==cls.richNs+"treeNode"):
+            if(element.get("icon")):
+                element.set("iconExpanded",element.get("icon"))
+                element.set("iconCollapsed",element.get("icon"))
+                element.attrib.pop("icon")
         elif(element.tag==cls.richNs+"treeNodesAdaptor"):
             element.tag=cls.richNs+"treeModelAdaptor"
         elif (element.tag==cls.richNs+"recursiveTreeNodesAdaptor"):
@@ -154,6 +222,9 @@ class RichElement:
         # Rich Drag'n'Drop Components
         elif(element.tag==cls.richNs+"dragSupport"):
             element.tag=cls.richNs+"dragSource"
+            if(element.get("DragType")):
+                element.set("type",element.get("DragType"))
+                element.attrib.pop("DragType")
         elif (element.tag==cls.richNs+"dropSupport"):
             element.tag=cls.richNs+"dropTarget"
         elif(element.tag==cls.richNs+"dndParam"):
@@ -190,6 +261,6 @@ class RichElement:
             parent.remove(element)
             print ("virtualEarth : not implemented")
         elif(element.tag==cls.richNs+"spacer"):
-            element.tag="{http://www.ihe.net/gazellecdk}insert"
+            element.tag="{http://www.ihe.net/gazellecdk}spacer"
         return element
     componantChange=classmethod(componantChange)

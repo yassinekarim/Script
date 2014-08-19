@@ -38,7 +38,7 @@ class Main:
         for path, dirs, files in os.walk(inputPath):
             for filepath in [ os.path.join(path, f) for f in files]:
                 if not "target" in filepath:
-                    if(filepath.endswith(".xhtml")):
+                    if(filepath.endswith(".xhtml") and filepath.__contains__("webapp")):
                         XhtmlTransformation.upgrade(filepath)
                     elif(filepath.endswith(".java") ):
                         JavaTransformation.parseJava(filepath)

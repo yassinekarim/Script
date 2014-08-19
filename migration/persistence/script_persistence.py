@@ -25,5 +25,5 @@ class PersistenceMigration:
                         ET.SubElement(element,"{http://java.sun.com/xml/ns/persistence}property",name="hibernate.transaction.manager_lookup_class",value="org.hibernate.transaction.JBossTransactionManagerLookup")
             else:
                 print ("tag != persistence-unit")
-        tree.write(filePath,pretty_print=True,encoding='utf-8')
+        tree.write(filePath,pretty_print=True,encoding='utf-8',xml_declaration=True)
     parseXml=classmethod(parseXml)
