@@ -205,8 +205,8 @@ class RichElement:
             if(var is not None):
                 for child in element.iter():
                     for key,value in child.attrib.items():
-                        if(child.tag!=cls.richNs+"tree"or key!="var" )
-                        child.attrib[key]=value.replace(var,var+".data")
+                        if(child.tag!=cls.richNs+"tree"or key!="var" ):
+                            child.attrib[key]=value.replace(var,var+".data")
             if(element.get("treeNodeVar")):
                 element.set("var",element.get("treeNodeVar"))
                 element.attrib.pop("treeNodeVar")

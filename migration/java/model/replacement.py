@@ -39,13 +39,13 @@ class AbstractReplacement:
             offset+=tmp
             return offset,importChanged,content
         else:#found annoataio withou package declaration eg :@CollectionOfElements(targetElement = java.lang.String.class)
-            tmp,content=AbstractReplacement.gazelleReplace(content,debut,fin,match,self.replacement[self.replacement.rfind(".")+1:])
-            offset+=tmp
             if (not importChanged):
                 elementStr=match # eg :CollectionOfElements
                 regex = re.compile("import[\s]+[\w.]+"+elementStr)  #!!!!!!!!!!!!!!!!! problem multiple match !!!!!!!!!!!!!!!!!!!!!!!!!!! 
                 result= regex.search(content)
                 if result:
+                    tmp,content=AbstractReplacement.gazelleReplace(content,debut,fin,match,self.replacement[self.replacement.rfind(".")+1:])
+                    offset+=tmp
                     debutImport,finImport=result.span()
                     matchImport=result.group() # eg :import org.hibernate.annotations.CollectionOfElements
                     importStr=matchImport[7:] #eg :org.hibernate.annotations.CollectionOfElements
@@ -54,8 +54,11 @@ class AbstractReplacement:
                     offset+=tmp
                 else:
                     print ("import not found for match "+match)
+                    return offset,importChanged,content
                 return offset,True,content
             else:
+                tmp,content=AbstractReplacement.gazelleReplace(content,debut,fin,match,self.replacement[self.replacement.rfind(".")+1:])
+                offset+=tmp
                 return offset,importChanged,content
     def executeReplace(self,content):
         """find all occurence of the regex and call changeCode to change them one by one """
@@ -92,13 +95,13 @@ class AnnotationReplacement(AbstractReplacement):
             offset+=tmp
             return offset,importChanged,content
         else:#found annoataio withou package declaration eg :@CollectionOfElements(targetElement = java.lang.String.class)
-            tmp,content=AbstractReplacement.gazelleReplace(content,debut,fin,strWithoutP[indexAt+1:],self.replacement[self.replacement.rfind(".")+1:])
-            offset+=tmp
             if (not importChanged):
                 elementStr=strWithoutP[strWithoutP.find("@")+1:] # eg :CollectionOfElements
                 regex = re.compile("import[\s]+[\w.]+"+elementStr)  #!!!!!!!!!!!!!!!!! problem multiple match !!!!!!!!!!!!!!!!!!!!!!!!!!! 
                 result= regex.search(content)
                 if result:
+                    tmp,content=AbstractReplacement.gazelleReplace(content,debut,fin,strWithoutP[indexAt+1:],self.replacement[self.replacement.rfind(".")+1:])
+                    offset+=tmp                    
                     debutImport,finImport=result.span()
                     matchImport=result.group() # eg :import org.hibernate.annotations.CollectionOfElements
                     importStr=matchImport[7:] #eg :org.hibernate.annotations.CollectionOfElements
@@ -107,8 +110,11 @@ class AnnotationReplacement(AbstractReplacement):
                     offset+=tmp
                 else:
                     print ("import not found for match "+match)
+                    return offset,False,content
                 return offset,True,content
             else:
+                tmp,content=AbstractReplacement.gazelleReplace(content,debut,fin,strWithoutP[indexAt+1:],self.replacement[self.replacement.rfind(".")+1:])
+                offset+=tmp
                 return offset,importChanged,content
 class MethodReplacement(AbstractReplacement):
     """define change of code for method remplacement"""

@@ -72,15 +72,18 @@ class A4jElement:
                 element.attrib.pop("event")
             else:
                 action=element.get("action") or element.get("actionListener")
-                if(action):
+                if(element.get("action")):
                     element.set("listener",action)
                     element.attrib.pop("action")
+                else:
+                    element.set("listener",action)
+                    element.attrib.pop("actionListener")
                 onsubmit=element.get("onsubmit")
                 if(onsubmit is not None): 
                     element.set("onbegin",onsubmit)
                     element.attrib.pop("onsubmit")
                 for child in element:
-                    if(child.tag=={"{http://java.sun.com/jsf/core}setPropertyActionListener"):
+                    if(child.tag=="{http://java.sun.com/jsf/core}setPropertyActionListener"):
                         child.tag=cls.a4jNs+"param"
                         target=child.get("target")
                         if(target is not None):

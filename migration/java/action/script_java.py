@@ -30,7 +30,7 @@ class JavaTransformation:
                     else:
                         debut,fin=result.span()
                         index=content[fin:].find(";")
-                        content=content[:fin+index-1]+"""{
+                        content=content[:fin+index]+"""{
                         @Override
         protected Object getId("""+classMatch+""" t) {
             // TODO Auto-generated method stub
