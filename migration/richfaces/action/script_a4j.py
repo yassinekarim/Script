@@ -46,6 +46,7 @@ class A4jElement:
             subprocess.call(["mv","./"+relativePath+"/"+src,"./resources/"+relativePath+"/"+src])
         os.chdir(oldPath)
         element.set("library",library)
+        name.replace(".xcss",".ecss")
         element.set("name",name)
     ressourceUpdate=classmethod(ressourceUpdate)
     def componantChange(cls,element,filePath):
