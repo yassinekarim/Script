@@ -4,6 +4,7 @@ from lxml import etree as ET
 from migration.utils.change_definition import ChangeDefinition
 from migration.utils.jndiMigration import JndiMigration
 from migration.components.action.script_ejb import Search4Ejb
+from migration.web.script_web import WebMigration
 import os
 import subprocess
 class ComponentsMigration:
@@ -20,7 +21,7 @@ class ComponentsMigration:
                     init=ET.Element('{http://jboss.org/schema/seam/core}init')
                     for prop in element:
                         if(prop.get("name")=="jndi-pattern"):
-                            prop.text=JndiMigration.changeJndi(prop.text,"jboss")
+                            prop.text=JndiMigration.changeJndi(prop.text.strip(),"app")
                         init.set(prop.get("name"),prop.text)
                     root.remove(element)
                     root.insert(2, init)
@@ -28,7 +29,7 @@ class ComponentsMigration:
                 jndi=element.get("persistence-unit-jndi-name")
                 if jndi is not None:
                     element.set("persistence-unit-jndi-name",JndiMigration.changeJndi(jndi,"jboss"))
-        tree.write(filePath,pretty_print=True,encoding='utf-8',xml_declaration=True)
+        tree.write(filePath,pretty_print=True,encoding='utf-8')
     parseXml=classmethod(parseXml)
     componentsFilePath=list()
     def addComponents(cls,projectPath):
@@ -39,16 +40,13 @@ class ComponentsMigration:
         # print ("begin mvn clean package"+absoluteProjectPath)
         # subprocess.call(["mvn","clean","package"], shell=True)
         # print ("end mvn clean package")
-        earPath = input("Saisissez le chemin vers l'ear ( . = {} ): ".format(absoluteProjectPath))
-        jbossHome = input("Saisissez le chemin absolu vers Jboss7 et assurez vous que le serveur est stoppé: ")
-        subprocess.call(["cp",earPath,jbossHome+"/standalone/deployments"], shell=True)
-        f=open("log.tmp","w")
-        subprocess.call(jbossHome+"/bin/standalone.sh",stdout=f)
+        print ("Veuillez deployer l'ear")
+        log = input("Saisissez le chemin vers le fichier de log : ")
+        f=open(log,"r")
+        content = f.read()
         f.close()
-        f = open("log.tmp","r")
-        content = f.read()     
-        f.close()
+        os.chdir(oldPath)
         for path in cls.componentsFilePath:
             Search4Ejb.parseLog(content,path)
-        os.chdir(oldPath)
+            WebMigration.updateJndi()
     addComponents=classmethod(addComponents)

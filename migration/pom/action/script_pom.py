@@ -179,7 +179,10 @@ class PomMigration:
                     parent=element.getparent()
                     newdep=cls.newDep(element,"org.hibernate","hibernate-core","4.0.1.Final")
                     parent.append(newdep)
-                    parent.remove(element)   
+                    parent.remove(element)  
+                elif("jboss-seam-jul"==element.find("xmlns:artifactId",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'}).text):
+                    parent=element.getparent()
+                    parent.remove(element)
                 elif("ejb3-persistence"==element.find("xmlns:artifactId",namespaces={'xmlns': 'http://maven.apache.org/POM/4.0.0'}).text):
                     parent=element.getparent()
                     parent.remove(element)   

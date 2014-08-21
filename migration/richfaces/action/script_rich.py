@@ -109,7 +109,7 @@ class RichElement:
             element.tag=cls.richNs+"togglePanelItem"
             element=RichElement.migrateValueChangeAttribute(element)
         elif (element.tag== cls.richNs+"toggleControl"):
-            if(element.get("targetItem") is None):
+            if(element.get("targetItem") is None and element.get("switchToState") is not None ):
                 element=RichElement.migrateValueChangeAttribute(element)
                 element.set("targetItem",element.get("switchToState"))
                 element.attrib.pop("switchToState")

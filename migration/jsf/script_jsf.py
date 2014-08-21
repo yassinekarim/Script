@@ -38,9 +38,7 @@ class XhtmlTransformation:
             else:
                 modalPanel=match[25:vPos]
                 json=match[vPos+1:match.__len__()-2]
-                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                 print(json+" found at element "+tree.getpath(element)+" in "+filePath+" please use  #{rich:component("+modalPanel+")}.resize(width,height);and #{rich:component("+modalPanel+")}.moveTo(top,left); to correct the issue")
-                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                 text=text.replace(match,"#{rich:component("+modalPanel+")}."+show+"()")
             result= re.search("Richfaces\."+show+"ModalPanel\(.*?\)",text)
         return text
