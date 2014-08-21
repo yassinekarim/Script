@@ -57,7 +57,8 @@ class JavaTransformation:
     reInitMethodList = classmethod(reInitMethodList)
 
     def parseJava(cls,filePath):
-        """reade the java file and replace it's content with the upgraded content"""
+        print(filePath)
+        """read the java file and replace it's content with the upgraded content"""
         f=open(filePath,"r")
         content = f.read()
         f.close()
