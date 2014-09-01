@@ -1,4 +1,4 @@
-#!/opt/python3/bin/python3 
+#!/usr/bin/python3 
 # -*-coding:utf-8 -*
 import os
 import subprocess
@@ -20,7 +20,6 @@ class Main:
         parser = ET.XMLParser(remove_blank_text=True)
         tree = ET.parse(filePath,parser)
         tree=ChangeDefinition.changedefinition(tree)
-        root = tree.getroot()
         tree.write(filePath,pretty_print=True,encoding='utf-8')
     changeDefinition=classmethod(changeDefinition)
     def addDeploymentStructure(cls):
@@ -52,7 +51,7 @@ class Main:
                         tmp=PomMigration.parseXml(filepath)
                         isEar=isEar or tmp 
                     elif(filepath.endswith("/faces-config.xml")):
-                       FaceConfigMigration.parseXml(filepath)
+                        FaceConfigMigration.parseXml(filepath)
                     elif(filepath.endswith("/pages.xml")):
                         cls.changeDefinition(filepath)
                     elif(filepath.endswith("-ds.xml")):

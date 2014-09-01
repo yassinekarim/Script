@@ -1,4 +1,4 @@
-#!/opt/python3/bin/python3 
+#!/usr/bin/python3 
 # -*-coding:utf-8 -*
 from lxml import etree as ET
 from migration.utils.change_definition import ChangeDefinition

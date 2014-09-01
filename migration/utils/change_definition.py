@@ -1,6 +1,5 @@
-#!/opt/python3/bin/python3
+#!/usr/bin/python3
 # -*-coding:utf-8 -*
-import sys
 import re
 from lxml import etree as ET
 

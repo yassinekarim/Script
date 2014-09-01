@@ -1,4 +1,4 @@
-#!/opt/python3/bin/python3
+#!/usr/bin/python3
 # -*-coding:utf-8 -*
 from lxml import etree as ET
 from migration.utils.change_definition import ChangeDefinition
@@ -6,7 +6,6 @@ from migration.utils.jndiMigration import JndiMigration
 from migration.components.action.script_ejb import Search4Ejb
 from migration.web.script_web import WebMigration
 import os
-import subprocess
 class ComponentsMigration:
     """component.xml migration """
     def parseXml(cls,filePath):
@@ -37,7 +36,6 @@ class ComponentsMigration:
     def addComponents(cls,projectPath):
         """build and deploy project and give the log to Search4Ejb"""
         oldPath = os.getcwd()
-        absoluteProjectPath=os.path.abspath(projectPath)
         os.chdir(projectPath)
         # print ("begin mvn clean package"+absoluteProjectPath)
         # subprocess.call(["mvn","clean","package"], shell=True)

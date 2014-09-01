@@ -1,4 +1,4 @@
-#!/opt/python3/bin/python3
+#!/usr/bin/python3
 # -*-coding:utf-8 -*
 from lxml import etree as ET
 import os
@@ -76,7 +76,7 @@ class A4jElement:
                 if(element.get("action")):
                     element.set("listener",action)
                     element.attrib.pop("action")
-                else:
+                elif(action):
                     element.set("listener",action)
                     element.attrib.pop("actionListener")
                 onsubmit=element.get("onsubmit")
@@ -113,7 +113,7 @@ class A4jElement:
                 element.attrib.pop("popup")
         elif (element.tag== cls.a4jNs+"outputPanel"):
             if(element.get("layout")=="none"):
-                element.attrib.pop(layout)
+                element.attrib.pop("layout")
                 element.set("rendered","false")
         elif(element.tag== cls.a4jNs+"loadStyle" ):
             element.tag=cls.hNs+"outputStylesheet"
@@ -121,5 +121,4 @@ class A4jElement:
         elif(element.tag== cls.a4jNs+"loadScript"):
             element.tag=cls.hNs+"outputScript"
             A4jElement.ressourceUpdate(element,filePath)
-        return element
     componantChange=classmethod(componantChange)

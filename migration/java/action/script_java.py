@@ -1,4 +1,4 @@
-#!/opt/python3/bin/python3
+#!/usr/bin/python3
 # -*-coding:utf-8 -*
 from migration.java.model.replacement import MethodReplacement
 import re
@@ -57,7 +57,6 @@ class JavaTransformation:
     reInitMethodList = classmethod(reInitMethodList)
 
     def parseJava(cls,filePath):
-        print(filePath)
         """read the java file and replace it's content with the upgraded content"""
         f=open(filePath,"r")
         content = f.read()

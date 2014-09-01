@@ -1,4 +1,4 @@
-#!/opt/python3/bin/python3 
+#!/usr/bin/python3 
 # -*-coding:utf-8 -*
 from lxml import etree as ET
 from migration.utils.change_definition import ChangeDefinition
@@ -19,7 +19,7 @@ class WebMigration:
                     paramValues=paramValue.text.strip().split(',')
                     newJndiList=list()
                     for oldJndi in paramValues:
-                        oldJndi=oldJndi[:len(oldJndi)-6]
+                        oldJndi=oldJndi[:oldJndi.__len__()-6]
                         oldJndi=oldJndi[oldJndi.rfind('/')+1:]
                         newJNdi=[s for s in [jndiTuple[0] for jndiTuple in jndiList] if oldJndi in s]
                         newJndiList.append(newJNdi[0])

@@ -1,6 +1,5 @@
-#!/opt/python3/bin/python3
+#!/usr/bin/python3
 # -*-coding:utf-8 -*
-import sys
 from lxml import etree as ET
 import os
 basestring = (str,bytes)
@@ -39,7 +38,7 @@ class PomMigration:
             scope=scope.text
         return cls.createDep(groupId,artifactId,version,scope)
     newDep=classmethod(newDep)
-    def findVersion(cls,filePath):
+    def findVersion(cls,filePath,artifactId):
         parser=ET.XMLParser(remove_blank_text=True)
         tree=ET.parse(filePath,parser)
         root=tree.getroot()
@@ -52,15 +51,13 @@ class PomMigration:
                 absoluteFilePath=os.path.abspath(filePath)
                 projectPath=absoluteFilePath[:absoluteFilePath.rfind("/")]
                 oldPath = os.getcwd()
-                absoluteProjectPath=os.path.abspath(projectPath)
                 os.chdir(projectPath)
-                tmp=cls.findVersion(relativePath.text)
+                tmp=cls.findVersion(relativePath.text,artifactId)
                 os.chdir(oldPath)
                 return tmp
             else:
                 versionText=input("version of "+artifactId+" cannot be determined please enter the version")
                 return versionText
-
     findVersion=classmethod(findVersion)
     def verifyPom(cls,filePath,artifactId):
         parser=ET.XMLParser(remove_blank_text=True)
@@ -79,15 +76,13 @@ class PomMigration:
                 absoluteFilePath=os.path.abspath(filePath)
                 projectPath=absoluteFilePath[:absoluteFilePath.rfind("/")]
                 oldPath = os.getcwd()
-                absoluteProjectPath=os.path.abspath(projectPath)
                 os.chdir(projectPath)
-                tmp=cls.findVersion(relativePath.text)
+                tmp=cls.findVersion(relativePath.text,artifactId)
                 os.chdir(oldPath)
                 return tmp
             else:
                 versionText=input("version of "+artifactId+" cannot be determined please enter the version")
                 return versionText
-
     verifyPom=classmethod(verifyPom)
     def getProjectPath(cls,artifactId):
         projectPath=input('Please enter the path to the project directory :')

@@ -1,4 +1,4 @@
-#!/opt/python3/bin/python3
+#!/usr/bin/python3
 # -*-coding:utf-8 -*
 from lxml import etree as ET
 from migration.richfaces.action.script_rich import RichElement
@@ -125,9 +125,9 @@ class XhtmlTransformation:
             elif(element.tag=="{http://www.w3.org/1999/xhtml}head"):
                 element.tag="{http://java.sun.com/jsf/html}head"
             elif(XhtmlTransformation.isRich(element.tag)):
-                element=RichElement.componantChange(element)
+                RichElement.componantChange(element)
             elif(XhtmlTransformation.isA4J(element.tag)):
-                element=A4jElement.componantChange(element,filePath)
+                A4jElement.componantChange(element,filePath)
             elif (element.tag==  "{http://java.sun.com/jsf/facelets}include"):
                 src=element.get("viewId")
                 if(src):

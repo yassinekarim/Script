@@ -1,16 +1,13 @@
-#!/opt/python3/bin/python3
+#!/usr/bin/python3
 # -*-coding:utf-8 -*
-import sys
 from lxml import etree as ET
 from migration.utils.jndiMigration import JndiMigration
-import os
 import subprocess
 basestring = (str,bytes)
 
 class DataSourceMigration:
     
     def parseXml(cls,filePath):
-        print(filePath)
         """parse *-ds.xml to change for the new version"""
         parser = ET.XMLParser(remove_blank_text=True)
         tree = ET.parse(filePath,parser)
@@ -26,7 +23,6 @@ class DataSourceMigration:
             idleTimeoutMinutes=localTxDatasource.find("idle-timeout-minutes")
             preparedStatementCacheSize=localTxDatasource.find("prepared-statement-cache-size")
             blockingTimeoutMillis=localTxDatasource.find("blocking-timeout-millis")
-            newConnectionSql=localTxDatasource.find("new-connection-sql")
             checkValidConnectionSql=localTxDatasource.find("check-valid-connection-sql")
             NSMAP={None : "http://www.jboss.org/ironjacamar/schema"} 
             newRoot = ET.Element("datasources",nsmap=NSMAP)

@@ -1,12 +1,10 @@
-#!/opt/python3/bin/python3
+#!/usr/bin/python3
 # -*-coding:utf-8 -*
-import sys
 from lxml import etree as ET
 class Search4Ejb:
     jndiList=list()
     def parseLog(cls,logContent,componentPath):
-        """parse the log to find ejb jndi and add them to components.xml"""
-        
+        """parse the log to find ejb jndi and add them to components.xml"""        
         listTexte=logContent.split('\n')
         listLog=iter(listTexte)
         for ligne in listLog:
