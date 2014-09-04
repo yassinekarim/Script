@@ -1,90 +1,92 @@
-#!/usr/bin/python3 
+"""module for web.xml migration"""
+#!/usr/bin/python3
 # -*-coding:utf-8 -*
 from lxml import etree as ET
 from migration.utils.change_definition import ChangeDefinition
 from migration.components.action.script_ejb import Search4Ejb
 class WebMigration:
-    projectFilePath=""
-    filePath=""
-    def updateJndi(cls):
-        parser = ET.XMLParser(remove_blank_text=True,load_dtd=True)
-        tree = ET.parse(cls.filePath,parser)   
+    """this class contains method for web.xml migration"""
+    project_file_path = ""
+    file_path = ""
+    def update_jndi(cls):
+        """update resteasy jndi using the parsed log"""
+        parser = ET.XMLParser(remove_blank_text=True, load_dtd=True)
+        tree = ET.parse(cls.file_path, parser)
         root = tree.getroot()
-        jndiList=Search4Ejb.jndiList
+        jndi_list = Search4Ejb.jndi_list
         for element in root:
-            if(element.tag=="{http://java.sun.com/xml/ns/javaee}context-param"):
-                paramName=element.find("{http://java.sun.com/xml/ns/javaee}param-name")
-                paramValue=element.find("{http://java.sun.com/xml/ns/javaee}param-value")
-                if(paramName.text=="resteasy.jndi.resources"):
-                    paramValues=paramValue.text.strip().split(',')
-                    newJndiList=list()
-                    for oldJndi in paramValues:
-                        oldJndi=oldJndi[:oldJndi.__len__()-6]
-                        oldJndi=oldJndi[oldJndi.rfind('/')+1:]
-                        newJNdi=[s for s in [jndiTuple[0] for jndiTuple in jndiList] if oldJndi in s]
-                        newJndiList.append(newJNdi[0])
-                    paramValue.text=','.join(newJndiList)
-        tree.write(cls.filePath,pretty_print=True,encoding='utf-8', xml_declaration=True)         
-    updateJndi=classmethod(updateJndi)
-    def parseXml(cls,filePath):
-        """parse the web.xml update definition and richfaces context-param"""
-        if (cls.projectFilePath in filePath):
-            cls.filePath=filePath
-        parser = ET.XMLParser(remove_blank_text=True,load_dtd=True)
-        tree = ET.parse(filePath,parser)
-        tree=ChangeDefinition.changedefinition(tree)
+            if element.tag == "{http://java.sun.com/xml/ns/javaee}context-param":
+                param_name = element.find("{http://java.sun.com/xml/ns/javaee}param-name")
+                param_value = element.find("{http://java.sun.com/xml/ns/javaee}param-value")
+                if param_name.text == "resteasy.jndi.resources":
+                    param_values = param_value.text.strip().split(',')
+                    new_jndi_list = list()
+                    for old_jndi in param_values:
+                        old_jndi = old_jndi[:old_jndi.__len__()-6]
+                        old_jndi = old_jndi[old_jndi.rfind('/')+1:]
+                        new_jndi = [s for s in [jndi_tuple[0] for jndi_tuple in jndi_list] if old_jndi in s]
+                        new_jndi_list.append(new_jndi[0])
+                    param_value.text = ','.join(new_jndi_list)
+        tree.write(cls.file_path, pretty_print=True, encoding='utf-8', xml_declaration=True)
+    update_jndi = classmethod(update_jndi)
+    def parse_xml(cls, file_path):
+        """parse the web.xml update definition, richfaces context-param and add richfaces recources servlet"""
+        if cls.project_file_path in file_path:
+            cls.file_path = file_path
+        parser = ET.XMLParser(remove_blank_text=True, load_dtd=True)
+        tree = ET.parse(file_path, parser)
+        tree = ChangeDefinition.changedefinition(tree)
         root = tree.getroot()
-        ressourceOptimisation=False
-        ressoureServlet=False
+        ressource_optimisation = False
+        ressoure_servlet = False
         for element in root:
-            if(element.tag=="{http://java.sun.com/xml/ns/javaee}context-param"):
-                paramName=element.find("{http://java.sun.com/xml/ns/javaee}param-name")
-                paramValue=element.find("{http://java.sun.com/xml/ns/javaee}param-value")
-                if(paramName.text=="org.richfaces.SKIN"):
-                    paramName.text="org.richfaces.skin"
-                    if(paramValue.text=="laguna"):
-                        paramValue.text="blueSky"
-                elif(paramName.text=="org.richfaces.BASE_SKIN"):
-                    paramName.text="org.richfaces.baseSkin"
-                elif(paramName.text=="org.richfaces.CONTROL_SKINNING"):
-                    paramName.text="org.richfaces.enableControlSkinning"
-                    if(paramValue.text=="disable"):
-                        paramValue.text="false"
+            if element.tag == "{http://java.sun.com/xml/ns/javaee}context-param":
+                param_name = element.find("{http://java.sun.com/xml/ns/javaee}param-name")
+                param_value = element.find("{http://java.sun.com/xml/ns/javaee}param-value")
+                if param_name.text == "org.richfaces.SKIN":
+                    param_name.text = "org.richfaces.skin"
+                    if param_value.text == "laguna":
+                        param_value.text = "blueSky"
+                elif param_name.text == "org.richfaces.BASE_SKIN":
+                    param_name.text = "org.richfaces.baseSkin"
+                elif param_name.text == "org.richfaces.CONTROL_SKINNING":
+                    param_name.text = "org.richfaces.enableControlSkinning"
+                    if param_value.text == "disable":
+                        param_value.text = "false"
                     else:
-                        paramValue.text="true"
-                elif(paramName.text=="org.richfaces.CONTROL_SKINNING_CLASSES"):
-                    paramName.text="org.richfaces.enableControlSkinningClasses"
-                    if(paramValue.text=="disable"):
-                        paramValue.text="false"
+                        param_value.text = "true"
+                elif param_name.text == "org.richfaces.CONTROL_SKINNING_CLASSES":
+                    param_name.text = "org.richfaces.enableControlSkinningClasses"
+                    if param_value.text == "disable":
+                        param_value.text = "false"
                     else:
-                        paramValue.text="true"
-                elif(paramName.text=="org.richfaces.CONTROL_SKINNING_LEVEL"):
+                        param_value.text = "true"
+                elif param_name.text == "org.richfaces.CONTROL_SKINNING_LEVEL":
                     element.getparent().remove(element)
-                elif(paramName.text=="org.richfaces.LoadScriptStrategy" or paramName.text=="org.richfaces.LoadStyleStrategy"):
-                    if(ressourceOptimisation):
+                elif param_name.text == "org.richfaces.LoadScriptStrategy" or param_name.text == "org.richfaces.LoadStyleStrategy":
+                    if ressource_optimisation:
                         root.remove(element)
                     else:
-                        paramName.text="org.richfaces.resourceOptimization.enabled"
-                        ressourceOptimisation=True
-                        if(paramValue.text=="ALL"):
-                            paramValue.text="true"
+                        param_name.text = "org.richfaces.resourceOptimization.enabled"
+                        ressource_optimisation = True
+                        if param_value.text == "ALL":
+                            param_value.text = "true"
                         else:
-                            paramValue.text="false"
-            elif(not ressoureServlet):
-                if(element.tag=="{http://java.sun.com/xml/ns/javaee}servlet-mapping"):
-                    ressoureServlet=True
-                    servlet=ET.fromstring("""<servlet>
-    <servlet-name>Resource Servlet</servlet-name>
-    <servlet-class>org.richfaces.webapp.ResourceServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
+                            param_value.text = "false"
+            elif not ressoure_servlet and element.tag == "{http://java.sun.com/xml/ns/javaee}servlet-mapping":
+                ressoure_servlet = True
+                servlet = ET.fromstring("""<servlet>
+<servlet-name>Resource Servlet</servlet-name>
+<servlet-class>org.richfaces.webapp.ResourceServlet</servlet-class>
+<load-on-startup>1</load-on-startup>
 </servlet>""")
-                    servletMapping=ET.fromstring("""<servlet-mapping>
-    <servlet-name>Resource Servlet</servlet-name>
-    <url-pattern>/org.richfaces.resources/*</url-pattern>
+                servletMapping = ET.fromstring("""<servlet-mapping>
+<servlet-name>Resource Servlet</servlet-name>
+<url-pattern>/org.richfaces.resources/*</url-pattern>
 </servlet-mapping>""")
-                    parent=element.getparent()
-                    index=parent.index(element)
-                    parent.insert(index+1,servlet)
-                    parent.insert(index+2,servletMapping)
-        tree.write(filePath,pretty_print=True,encoding='utf-8', xml_declaration=True)
-    parseXml=classmethod(parseXml)
+                parent = element.getparent()
+                index = parent.index(element)
+                parent.insert(index+1, servlet)
+                parent.insert(index+2, servletMapping)
+        tree.write(file_path, pretty_print=True, encoding='utf-8', xml_declaration=True)
+    parse_xml = classmethod(parse_xml)

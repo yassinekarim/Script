@@ -1,37 +1,37 @@
-#!/usr/bin/python3 
+"""script to migrate JNDI"""
+#!/usr/bin/python3
 # -*-coding:utf-8 -*
 class JndiMigration:
-
-    def changeJndi(cls,jndiString,scope):
+    """provides two methods to migrate JNDI"""
+    def change_jndi(cls, jndi_string, scope):
         """update Jndi to match ejb3.1 jndi rules"""
-        if (":" in jndiString):
-            index=jndiString.rfind(':')
-            if (jndiString[:index]=="java"):
-                if (jndiString[index+1]=="/"):
-                    return jndiString[:index+1]+scope+"/root"+jndiString[index+1:]
+        if ":" in jndi_string:
+            index = jndi_string.rfind(':')
+            if jndi_string[:index] == "java":
+                if jndi_string[index+1] == "/":
+                    return jndi_string[:index+1]+scope+"/root"+jndi_string[index+1:]
                 else:
-                    return jndiString[:index+1]+scope+jndiString[index+1:]
+                    return jndi_string[:index+1]+scope+jndi_string[index+1:]
             else:
-                print ("erreur")
-        elif (jndiString[0]=="/"):
-            return "java:"+scope+"/root"+jndiString
+                print("erreur")
+        elif jndi_string[0] == "/":
+            return "java:"+scope+"/root"+jndi_string
         else:
-            return "java:"+scope+"/"+jndiString
-    changeJndi = classmethod(changeJndi)
-
-    def changeJndiDS(cls,jndiString,scope):
-        """update Jndi to match ejb3.1 jndi rules"""
-        if (":" in jndiString):
-            index=jndiString.rfind(':')
-            if (jndiString[:index]=="java"):
-                if (jndiString[index+1]=="/"):
-                    return jndiString[:index+1]+scope+"/datasources"+jndiString[index+1:]
+            return "java:"+scope+"/"+jndi_string
+    change_jndi = classmethod(change_jndi)
+    def change_jndi_ds(cls, jndi_string, scope):
+        """provide correct JNDI Datasource"""
+        if ":" in jndi_string:
+            index = jndi_string.rfind(':')
+            if jndi_string[:index] == "java":
+                if jndi_string[index+1] == "/":
+                    return jndi_string[:index+1]+scope+"/datasources"+jndi_string[index+1:]
                 else:
-                    return jndiString[:index+1]+scope+jndiString[index+1:]
+                    return jndi_string[:index+1]+scope+jndi_string[index+1:]
             else:
-                print ("erreur")
-        elif (jndiString[0]=="/"):
-            return "java:"+scope+"/datasources"+jndiString
+                print("erreur")
+        elif jndi_string[0] == "/":
+            return "java:"+scope+"/datasources"+jndi_string
         else:
-            return "java:"+scope+"/datasources/"+jndiString
-    changeJndiDS = classmethod(changeJndiDS)
+            return "java:"+scope+"/datasources/"+jndi_string
+    change_jndi_ds = classmethod(change_jndi_ds)

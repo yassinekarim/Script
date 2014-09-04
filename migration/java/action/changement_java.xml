@@ -1,93 +1,92 @@
 <java>
 	<annotation
-		regex="^[\t ]*@[\s]*(org\.hibernate\.annotations\.)?(?&lt;![\w])CollectionOfElements(?![;\w])[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?"
-		replacement="@javax.persistence.ElementCollection">
-		<mapping old="targetElement" new="targetClass" />
-		<mapping old="fetch" new="fetch" />
+		regex = "^[\t ]*@[\s]*(org\.hibernate\.annotations\.)?(?&lt;![\w])CollectionOfElements(?![;\w])[\s]*((\(([^, )]+)(, [^, )]+)*\))?)?"
+		replacement = "@javax.persistence.ElementCollection">
+		<mapping old = "targetElement" new = "targetClass" />
+		<mapping old = "fetch" new = "fetch" />
 	</annotation>
 	<annotation
-		regex="^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])NotEmpty(?![;\w])[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?"
-		replacement="@javax.validation.constraints.NotEmpty" />
+		regex = "^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])NotEmpty(?![;\w])[\s]*((\(([^, )]+)(, [^, )]+)*\))?)?"
+		replacement = "@javax.validation.constraints.NotEmpty" />
 	<annotation
-		regex="^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])NotNull(?![;\w])[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?"
-		replacement="@javax.validation.constraints.NotNull" />
+		regex = "^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])NotNull(?![;\w])[\s]*((\(([^, )]+)(, [^, )]+)*\))?)?"
+		replacement = "@javax.validation.constraints.NotNull" />
 	<annotation
-		regex="^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])Length(?![;\w])[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?"
-		replacement="@javax.validation.constraints.Size" />
+		regex = "^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])Length(?![;\w])[\s]*((\(([^, )]+)(, [^, )]+)*\))?)?"
+		replacement = "@javax.validation.constraints.Size" />
 	<annotation
-		regex="^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])Email(?![;\w])[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?"
-		replacement="@org.hibernate.validator.constraints.Email" />
+		regex = "^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])Email(?![;\w])[\s]*((\(([^, )]+)(, [^, )]+)*\))?)?"
+		replacement = "@org.hibernate.validator.constraints.Email" />
 	<annotation
-		regex="^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])Min(?![;\w])[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?"
-		replacement="@javax.validation.constraints.Min" />
+		regex = "^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])Min(?![;\w])[\s]*((\(([^, )]+)(, [^, )]+)*\))?)?"
+		replacement = "@javax.validation.constraints.Min" />
 	<annotation
-		regex="^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])Max(?![;\w])[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?"
-		replacement="@javax.validation.constraints.Max" />
+		regex = "^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])Max(?![;\w])[\s]*((\(([^, )]+)(, [^, )]+)*\))?)?"
+		replacement = "@javax.validation.constraints.Max" />
 	<annotation
-		regex="^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])Pattern(?![;\w])[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?"
-		replacement="@javax.validation.constraints.Pattern">
-		<mapping old="regex" new="regexp" />
+		regex = "^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])Pattern(?![;\w])[\s]*((\(([^, )]+)(, [^, )]+)*\))?)?"
+		replacement = "@javax.validation.constraints.Pattern">
+		<mapping old = "regex" new = "regexp" />
 	</annotation>
 	<annotation
-		regex="^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])Range(?![;\w])[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?"
-		replacement="@org.hibernate.validator.constraints.Range" />
+		regex = "^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])Range(?![;\w])[\s]*((\(([^, )]+)(, [^, )]+)*\))?)?"
+		replacement = "@org.hibernate.validator.constraints.Range" />
 	<annotation
-		regex="^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])Past(?![;\w])[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?"
-		replacement="@javax.validation.constraints.Past" />
+		regex = "^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])Past(?![;\w])[\s]*((\(([^, )]+)(, [^, )]+)*\))?)?"
+		replacement = "@javax.validation.constraints.Past" />
 	<annotation
-		regex="^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])Valid(?![;\w])[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?"
-		replacement="@javax.validation.constraints.Valid" />
+		regex = "^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])Valid(?![;\w])[\s]*((\(([^, )]+)(, [^, )]+)*\))?)?"
+		replacement = "@javax.validation.constraints.Valid" />
 	<annotation
-		regex="^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])CreditCardNumber(?![;\w])[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?"
-		replacement="@javax.validation.constraints.CreditCardNumber" />
+		regex = "^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])CreditCardNumber(?![;\w])[\s]*((\(([^, )]+)(, [^, )]+)*\))?)?"
+		replacement = "@javax.validation.constraints.CreditCardNumber" />
 	<annotation
-		regex="^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])Digits(?![;\w])[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?"
-		replacement="@javax.validation.constraints.Digits">
-		<mapping old="integerDigits" new="integer" />
-		<mapping old="fractionDigits" new="fraction" />
+		regex = "^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])Digits(?![;\w])[\s]*((\(([^, )]+)(, [^, )]+)*\))?)?"
+		replacement = "@javax.validation.constraints.Digits">
+		<mapping old = "integerDigits" new = "integer" />
+		<mapping old = "fractionDigits" new = "fraction" />
 	</annotation>
 	<annotation
-		regex="^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])Future[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?"
-		replacement="@javax.validation.constraints.Future" />
+		regex = "^[\t ]*@[\s]*(org\.hibernate\.validator\.)?(?&lt;![\w])Future[\s]*((\(([^, )]+)(, [^, )]+)*\))?)?"
+		replacement = "@javax.validation.constraints.Future" />
 	<annotation
-		regex="^[\t ]*@[\s]*(org\.jboss\.seam\.annotations\.)?(?&lt;![\w])Startup[\s]*((\(([^,)]+)(,[^,)]+)*\))?)?"
-		replacement="@javax.ejb.Startup" />
-	<class regex="(org\.richfaces\.model\.)?(?&lt;![\w])UploadItem(?![;\w])"
-		replacement="org.richfaces.model.UploadedFile">
-		<method regex="getUploadItem" />
-		<method regex="getFileName" />
+		regex = "^[\t ]*@[\s]*(org\.jboss\.seam\.annotations\.)?(?&lt;![\w])Startup[\s]*((\(([^, )]+)(, [^, )]+)*\))?)?"
+		replacement = "@javax.ejb.Startup" />
+	<class regex = "(org\.richfaces\.model\.)?(?&lt;![\w])UploadItem(?![;\w])"
+		replacement = "org.richfaces.model.UploadedFile">
+		<method regex = "getUploadItem" />
+		<method regex = "getFileName" />
 	</class>
-
-	<class regex="(org\.richfaces\.model\.)?(?&lt;![\w])Ordering(?![;\w])"
-		replacement="org.richfaces.component.SortOrder">
-		<mapping old="ASCENDING" new="ascending" />
-		<mapping old="DESCENDING" new="descending" />
-		<mapping old="UNSORTED" new="unsorted" />
+	<class regex = "(org\.richfaces\.model\.)?(?&lt;![\w])Ordering(?![;\w])"
+		replacement = "org.richfaces.component.SortOrder">
+		<mapping old = "ASCENDING" new = "ascending" />
+		<mapping old = "DESCENDING" new = "descending" />
+		<mapping old = "UNSORTED" new = "unsorted" />
 	</class>
-	<class regex="(org\.hibernate\.type\.)?(?&lt;![\w])Hibernate(?![;\w])"
-		replacement="org.hibernate.type.StandardBasicTypes" />
-	<class regex="(org\.richfaces\.event\.)?(?&lt;![\w])UploadEvent(?![;\w])"
-		replacement="org.richfaces.event.FileUploadEvent">
-		<method regex="getUploadItem" />
-		<method regex="getFileName" />
+	<class regex = "(org\.hibernate\.type\.)?(?&lt;![\w])Hibernate(?![;\w])"
+		replacement = "org.hibernate.type.StandardBasicTypes" />
+	<class regex = "(org\.richfaces\.event\.)?(?&lt;![\w])UploadEvent(?![;\w])"
+		replacement = "org.richfaces.event.FileUploadEvent">
+		<method regex = "getUploadItem" />
+		<method regex = "getFileName" />
 	</class>
 	<class
-		regex="(org\.hibernate\.engine\.)?(?&lt;![\w])SessionFactoryImplementor(?![;\w])"
-		replacement="org.hibernate.engine.spi.SessionFactoryImplementor" />
+		regex = "(org\.hibernate\.engine\.)?(?&lt;![\w])SessionFactoryImplementor(?![;\w])"
+		replacement = "org.hibernate.engine.spi.SessionFactoryImplementor" />
 	<class
-		regex="(org\.richfaces\.component\.xml\.)?(?&lt;![\w])XmlTreeDataBuilder(?![;\w])"
-		replacement="net.ihe.gazelle.common.tree.XmlTreeDataBuilder" />
-	<class regex="(org\.richfaces\.model\.)?(?&lt;![\w])TreeNodeImpl(?![;\w])"
-		replacement="net.ihe.gazelle.common.tree.GazelleTreeNodeImpl" />
+		regex = "(org\.richfaces\.component\.xml\.)?(?&lt;![\w])XmlTreeDataBuilder(?![;\w])"
+		replacement = "net.ihe.gazelle.common.tree.XmlTreeDataBuilder" />
+	<class regex = "(org\.richfaces\.model\.)?(?&lt;![\w])TreeNodeImpl(?![;\w])"
+		replacement = "net.ihe.gazelle.common.tree.GazelleTreeNodeImpl" />
 	<class
-		regex="(org\.richfaces\.component\.xml\.)?(?&lt;![\w])XmlNodeData(?![;\w])"
-		replacement="net.ihe.gazelle.common.tree.XmlNodeData" />
-	<class regex="(org\.hibernate\.ejb\.)?(?&lt;![\w])Ejb3Configuration(?![;\w])"
-		replacement="org.hibernate.ejb.Ejb3Configuration">
-		<method regex="buildEntityManagerFactory" />
+		regex = "(org\.richfaces\.component\.xml\.)?(?&lt;![\w])XmlNodeData(?![;\w])"
+		replacement = "net.ihe.gazelle.common.tree.XmlNodeData" />
+	<class regex = "(org\.hibernate\.ejb\.)?(?&lt;![\w])Ejb3Configuration(?![;\w])"
+		replacement = "org.hibernate.ejb.Ejb3Configuration">
+		<method regex = "buildEntityManagerFactory" />
 	</class>
-	<method regex="getFileName" replacement="getName" />
-	<method regex="getUploadItem" replacement="getUploadedFile" />
-	<method regex="buildEntityManagerFactory"
-		replacement="createEntityManagerFactory" />
+	<method regex = "getFileName" replacement = "getName" />
+	<method regex = "getUploadItem" replacement = "getUploadedFile" />
+	<method regex = "buildEntityManagerFactory"
+		replacement = "createEntityManagerFactory" />
 </java>

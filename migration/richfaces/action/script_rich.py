@@ -1,354 +1,343 @@
+"""contains richfaces component migration changes"""
 #!/usr/bin/python3
 # -*-coding:utf-8 -*
 from lxml import etree as ET
-
-
 class RichElement:
     """upgrade rich tag"""
-
-    richNs="{http://richfaces.org/rich}"
-    hNs="{http://java.sun.com/jsf/html}"
-    xhtmlNs="{http://www.w3.org/1999/xhtml}"  
-    def migrateValueChangeAttribute(cls,element):
+    richNs = "{http://richfaces.org/rich}"
+    hNs = "{http://java.sun.com/jsf/html}"
+    xhtmlNs = "{http://www.w3.org/1999/xhtml}"
+    def migrate_value_change_attribute(cls, element):
         """migrate value change attribute a common attribute to some rich tag"""
-        if(element.get("ValueChangeListener")):
-            element.set("itemchangeListener",element.get("ValueChangeListener"))
+        if element.get("ValueChangeListener"):
+            element.set("itemchangeListener", element.get("ValueChangeListener"))
             element.attrib.pop("ValueChangeListener")
-        if(element.get("ValueChangeEvent")):
-            element.set("ItemChangeEvent",element.get("ValueChangeEvent"))
+        if element.get("ValueChangeEvent"):
+            element.set("ItemChangeEvent", element.get("ValueChangeEvent"))
             element.attrib.pop("ValueChangeEvent")
         return element
-    migrateValueChangeAttribute=classmethod(migrateValueChangeAttribute)
-    def getFacetParent(cls,element):
+    migrate_value_change_attribute = classmethod(migrate_value_change_attribute)
+    def get_facet_parent(cls, element):
         """return first parent facet tag of the element"""
-        parent=element.getparent()
-        while (parent.tag != "{http://java.sun.com/jsf/core}facet"):
-            parent=parent.getparent()
+        parent = element.getparent()
+        while parent.tag != "{http://java.sun.com/jsf/core}facet":
+            parent = parent.getparent()
         return parent
-    getFacetParent=classmethod(getFacetParent)
-    def richValidation(cls,element):
+    get_facet_parent = classmethod(get_facet_parent)
+    def rich_validation(cls, element):
         """migration of validation components"""
-        if (element.tag== cls.richNs+"ajaxValidator"):
-            element.tag=cls.richNs+"validator"
+        if element.tag == cls.richNs+"ajaxValidator":
+            element.tag = cls.richNs+"validator"
             return True
-        elif (element.tag== cls.richNs+"beanValidator"):
-            element.tag="{http://java.sun.com/jsf/core}validateBean"
+        elif element.tag == cls.richNs+"beanValidator":
+            element.tag = "{http://java.sun.com/jsf/core}validateBean"
             return True
-            # comment=ET.Comment(ET.tostring(element))
-            # parent=element.getparent()
-            # parent.insert(parent.index(element),comment)
+            # comment = ET.Comment(ET.tostring(element))
+            # parent = element.getparent()
+            # parent.insert(parent.index(element), comment)
             # parent.remove(element)
         return False
-    richValidation=classmethod(richValidation)
-    def richInput(cls,element):
+    rich_validation = classmethod(rich_validation)
+    def rich_input(cls, element):
         """migration of input components"""
-        if (element.tag== cls.richNs+"calendar"):
-            # comment=ET.Comment(ET.tostring(element))
-            # parent=element.getparent()
-            # parent.insert(parent.index(element),comment)
+        if element.tag == cls.richNs+"calendar":
+            # comment = ET.Comment(ET.tostring(element))
+            # parent = element.getparent()
+            # parent.insert(parent.index(element), comment)
             # parent.remove(element)
-            print ("method in client side API renamed")
+            print("method in client side API renamed")
             return True
-        elif (element.tag== cls.richNs+"colorPicker"):
-            comment=ET.Comment(ET.tostring(element))
-            parent=element.getparent()
-            parent.insert(parent.index(element),comment)
+        elif element.tag == cls.richNs+"colorPicker":
+            comment = ET.Comment(ET.tostring(element))
+            parent = element.getparent()
+            parent.insert(parent.index(element), comment)
             parent.remove(element)
-            print("colorPicker not implemented (custom component)")
+            print("colorPicker not implemented(custom component)")
             return True
-        elif (element.tag== cls.richNs+"comboBox"):
-            element.tag=cls.richNs+"select"
-            element.set("enableManualInput","true")
-            print ("select Unified version of suggestionBox and comboBox from 3.3.x.")
+        elif element.tag == cls.richNs+"comboBox":
+            element.tag = cls.richNs+"select"
+            element.set("enableManualInput", "true")
+            print("select Unified version of suggestionBox and comboBox from 3.3.x.")
             return True
-        elif (element.tag== cls.richNs+"editor"):
-            script=ET.Element("{http://www.w3.org/1999/xhtml}script")
-            script.set("type","text/javascript")
-            script.text="window.CKEDITOR_BASEPATH = '#{request.contextPath}/org.richfaces.resources/javax.faces.resource/org.richfaces.ckeditor/'"
-            parent=element.getparent()
-            parent.insert(0,script)
-            print ("you should configure rich editor manually see home.xhtml in simmulator common for a sample")
+        elif element.tag == cls.richNs+"editor":
+            script = ET.Element("{http://www.w3.org/1999/xhtml}script")
+            script.set("type", "text/javascript")
+            script.text = "window.CKEDITOR_BASEPATH = '#{request.contextPath}/org.richfaces.resources/javax.faces.resource/org.richfaces.ckeditor/'"
+            parent = element.getparent()
+            parent.insert(0, script)
+            print("you should configure rich editor manually see home.xhtml in simmulator common for a sample")
             return True
-        elif (element.tag== cls.richNs+"fileUpload"):
+        elif element.tag == cls.richNs+"fileUpload":
             return True
-        elif (element.tag in [cls.richNs+"inplaceInput",cls.richNs+"inplaceSelect"]):
-            if(element.get("onviewactivated")):
-                element.set("onchange",element.get("onviewactivated"))
+        elif element.tag in [cls.richNs+"inplaceInput", cls.richNs+"inplaceSelect"]:
+            if element.get("onviewactivated"):
+                element.set("onchange", element.get("onviewactivated"))
                 element.attrib.pop("onviewactivated")
             return True
-        elif (element.tag== cls.richNs+"suggestionbox"):
-            element.tag=cls.richNs+"autocomplete"
-            if(element.get("suggestionAction")):
-                element.set("autocompleteMethod",element.get("suggestionAction"))
+        elif element.tag == cls.richNs+"suggestionbox":
+            element.tag = cls.richNs+"autocomplete"
+            if element.get("suggestionAction"):
+                element.set("autocompleteMethod", element.get("suggestionAction"))
                 element.attrib.pop("suggestionAction")
-            selfRendered=element.get("selfRendered")
-            if(selfRendered is not None and selfRendered =="true"):
-                element.set("mode","cachedAjax")
+            self_rendered = element.get("self_rendered")
+            if self_rendered is not None and self_rendered == "true":
+                element.set("mode", "cachedAjax")
             else:
-                element.set("mode","ajax")
-            if(selfRendered is not None):
-                element.attrib.pop("selfRendered")
-            print ("autoComplete Unified version of suggestionBox and comboBox from 3.3.x.")
+                element.set("mode", "ajax")
+            if self_rendered is not None:
+                element.attrib.pop("self_rendered")
+            print("autoComplete Unified version of suggestionBox and comboBox from 3.3.x.")
             return True
         return False
-    richInput=classmethod(richInput)
-    def richOutput(cls,element):
+    rich_input = classmethod(rich_input)
+    def rich_output(cls, element):
         """migration of output/panel components"""
-        if (element.tag== cls.richNs+"modalPanel"):
-            element.tag=cls.richNs+"popupPanel"
-            if(element.get("showWhenRendered")):
-                element.set("show",element.get("showWhenRendered"))
+        if element.tag == cls.richNs+"modalPanel":
+            element.tag = cls.richNs+"popupPanel"
+            if element.get("showWhenRendered"):
+                element.set("show", element.get("showWhenRendered"))
                 element.attrib.pop("showWhenRendered")
             return True
-        elif (element.tag in [cls.richNs+"panelBar",cls.richNs+"panelBarItem"]):
-            element.tag=element.tag.replace("panelBar","accordion")
+        elif element.tag in [cls.richNs+"panelBar", cls.richNs+"panelBarItem"]:
+            element.tag = element.tag.replace("panelBar", "accordion")
             return True
-        elif (element.tag== cls.richNs+"panelMenu"):
-            if(element.get("ValueChangeListener")):
-                element.set("itemchangeListener",element.get("ValueChangeListener"))
+        elif element.tag == cls.richNs+"panelMenu":
+            if element.get("ValueChangeListener"):
+                element.set("itemchangeListener", element.get("ValueChangeListener"))
                 element.attrib.pop("ValueChangeListener")
             return True
-        elif (element.tag== cls.richNs+"separator"):
-            element.tag=cls.xhtmlNs+"hr"
+        elif element.tag == cls.richNs+"separator":
+            element.tag = cls.xhtmlNs+"hr"
             return True
-        elif (element.tag== cls.richNs+"simpleTogglePanel"):
-            element.tag=cls.richNs+"collapsiblePanel"
+        elif element.tag == cls.richNs+"simpleTogglePanel":
+            element.tag = cls.richNs+"collapsiblePanel"
             return True
-        elif (element.tag == cls.richNs+"tabPanel"):
-            element=RichElement.migrateValueChangeAttribute(element)
+        elif element.tag == cls.richNs+"tabPanel":
+            element = RichElement.migrate_value_change_attribute(element)
             return True
-        elif (element.tag == cls.richNs+"tab"):
-            element=RichElement.migrateValueChangeAttribute(element)
-            if(element.get("label")):
-                element.set("header",element.get("label"))
+        elif element.tag == cls.richNs+"tab":
+            element = RichElement.migrate_value_change_attribute(element)
+            if element.get("label"):
+                element.set("header", element.get("label"))
                 element.attrib.pop("label")
             return True
-        elif (element.tag== cls.richNs+"togglePanel"):
-            RichElement.migrateValueChangeAttribute(element)
+        elif element.tag == cls.richNs+"togglePanel":
+            RichElement.migrate_value_change_attribute(element)
             return True
-        elif (element.tag== cls.richNs+"facets"):
-            element.tag=cls.richNs+"togglePanelItem"
-            element=RichElement.migrateValueChangeAttribute(element)
+        elif element.tag == cls.richNs+"facets":
+            element.tag = cls.richNs+"togglePanelItem"
+            element = RichElement.migrate_value_change_attribute(element)
             return True
-        elif (element.tag== cls.richNs+"toggleControl"):
-            if(element.get("targetItem") is None and element.get("switchToState") is not None ):
-                element=RichElement.migrateValueChangeAttribute(element)
-                element.set("targetItem",element.get("switchToState"))
+        elif element.tag == cls.richNs+"toggleControl":
+            if element.get("targetItem") is None and element.get("switchToState") is not None :
+                element = RichElement.migrate_value_change_attribute(element)
+                element.set("targetItem", element.get("switchToState"))
                 element.attrib.pop("switchToState")
-                facet=cls.getFacetParent(element)
-                facet.tag=cls.richNs+"togglePanelItem"
-                iD=element.get("id")
-                style=element.get("style")
-                value=element.get("value")
-                link=ET.Element(cls.hNs+"commandLink")
-                if(iD is not None):
-                    link.set("id",iD)
+                facet = cls.get_facet_parent(element)
+                facet.tag = cls.richNs+"togglePanelItem"
+                id_ = element.get("id")
+                style = element.get("style")
+                value = element.get("value")
+                link = ET.Element(cls.hNs+"commandLink")
+                if id_ is not None:
+                    link.set("id", id_)
                     element.attrib.pop("id")
-                if(style is not None):
-                    link.set("style",style)
+                if style is not None:
+                    link.set("style", style)
                     element.attrib.pop("style")
-                if(value is not None):
-                    link.set("value",value)
+                if value is not None:
+                    link.set("value", value)
                     element.attrib.pop("value")
-                parent=element.getparent()
-                parent.insert(parent.index(element),link)
+                parent = element.getparent()
+                parent.insert(parent.index(element), link)
                 link.append(element)
                 # parent.remove(element)
             return True
-        elif (element.tag== cls.richNs+"toolBar"):
-            element.tag=cls.richNs+"toolbar"
+        elif element.tag == cls.richNs+"toolBar":
+            element.tag = cls.richNs+"toolbar"
             return True
-        elif (element.tag== cls.richNs+"toolBarGroup"):
-            element.tag=cls.richNs+"toolbarGroup"
+        elif element.tag == cls.richNs+"toolBarGroup":
+            element.tag = cls.richNs+"toolbarGroup"
             return True
-        elif (element.tag== cls.richNs+"toolTip"):
-            element.tag=cls.richNs+"tooltip"
+        elif element.tag == cls.richNs+"toolTip":
+            element.tag = cls.richNs+"tooltip"
             return True
         return False
-    richOutput=classmethod(richOutput)
-    def richMenu(cls,element):
+    rich_output = classmethod(rich_output)
+    def rich_menu(cls, element):
         """migration of Menu components"""
-        if (element.tag== cls.richNs+"menuItem"):
-            if(element.get("value")):
-                element.set("label",element.get("value"))
+        if element.tag == cls.richNs+"menuItem":
+            if element.get("value"):
+                element.set("label", element.get("value"))
                 element.attrib.pop("value")
             return True
-        elif (element.tag== cls.richNs+"menuGroup"):
-            if(element.get("value")):
-                element.set("label",element.get("value"))
+        elif element.tag == cls.richNs+"menuGroup":
+            if element.get("value"):
+                element.set("label", element.get("value"))
                 element.attrib.pop("value")
             return True
-        elif (element.tag== cls.richNs+"menuSeparator"):
+        elif element.tag == cls.richNs+"menuSeparator":
             return True
         return False
-    richMenu=classmethod(richMenu)
-    def richOrdering(cls,element):
+    rich_menu = classmethod(rich_menu)
+    def rich_ordering(cls, element):
         """migration of ordering components"""
-        if (element.tag== cls.richNs+"listShuttle"):
-            element.tag=cls.richNs+"pickList"
-            print ("""The RF 3 listShuttle and pickList components were merged into the single pickList comopnent with RichFaces 4
+        if element.tag == cls.richNs+"listShuttle":
+            element.tag = cls.richNs+"pickList"
+            print("""The RF 3 listShuttle and pickList components were merged into the single pickList comopnent with RichFaces 4
     Note: The sourceList is not longer mutable, and is available only by subtraacting the target list from thh complete list.""")
             return True
-        #Rich Iteration Components
-        elif (element.tag== cls.richNs+"column"):
-            element.tag="{http://www.ihe.net/gazelle}column"
-            sortOrder=element.get("sortOrder")
-            if(sortOrder):
-                element.set("sortOrder",sortOrder.lower())
-            if(element[0].tag=="{http://java.sun.com/jsf/core}facet"):
-                element[0].tag="{http://java.sun.com/jsf/facelets}define"
+        return False
+    rich_ordering = classmethod(rich_ordering)
+    def rich_iteration(cls, element):
+        """migration of iteration components"""
+        if element.tag == cls.richNs+"column":
+            element.tag = "{http://www.ihe.net/gazelle}column"
+            sort_order = element.get("sortOrder")
+            if sort_order is not None:
+                element.set("sortOrder", sort_order.lower())
+            if element[0].tag == "{http://java.sun.com/jsf/core}facet":
+                element[0].tag = "{http://java.sun.com/jsf/facelets}define"
             return True
-        elif (element.tag== cls.richNs+"columnGroup"):
-            element.tag=cls.richNs+"columnGroup"
+        elif element.tag == cls.richNs+"columnGroup":
+            element.tag = cls.richNs+"columnGroup"
             return True
-        elif (element.tag== cls.richNs+"columns"):
-            comment=ET.Comment(ET.tostring(element))
-            parent=element.getparent()
-            parent.insert(parent.index(element),comment)
+        elif element.tag == cls.richNs+"columns":
+            comment = ET.Comment(ET.tostring(element))
+            parent = element.getparent()
+            parent.insert(parent.index(element), comment)
             parent.remove(element)
-            print ("columns not implemented")
+            print("columns not implemented")
             return True
-        elif (element.tag== cls.richNs+"dataOrderingList"):
-            element.tag=cls.richNs+"list"
-            element.set("type","ordered")
+        elif element.tag == cls.richNs+"dataOrderingList":
+            element.tag = cls.richNs+"list"
+            element.set("type", "ordered")
             return True
-        elif (element.tag== cls.richNs+"dataDefinitionList"):
-            element.tag=cls.richNs+"list"
-            element.set("type","definitions")
+        elif element.tag == cls.richNs+"dataDefinitionList":
+            element.tag = cls.richNs+"list"
+            element.set("type", "definitions")
             return True
-        elif (element.tag== cls.richNs+"dataList"):
-            element.tag=cls.richNs+"list"
-            element.set("type","unordered")
+        elif element.tag == cls.richNs+"dataList":
+            element.tag = cls.richNs+"list"
+            element.set("type", "unordered")
             return True
-        elif (element.tag== cls.richNs+"dataFilterSlider"):
-            comment=ET.Comment(ET.tostring(element))
-            parent=element.getparent()
-            parent.insert(parent.index(element),comment)
+        elif element.tag == cls.richNs+"dataFilterSlider":
+            comment = ET.Comment(ET.tostring(element))
+            parent = element.getparent()
+            parent.insert(parent.index(element), comment)
             parent.remove(element)
-            print ("dataFilterSlider not implemented")
+            print("dataFilterSlider not implemented")
             return True
-        elif (element.tag== cls.richNs+"datascroller"):
-            element.tag=cls.richNs+"dataScroller"
+        elif element.tag == cls.richNs+"datascroller":
+            element.tag = cls.richNs+"dataScroller"
             return True
-        elif (element.tag== cls.richNs+"dataTable"):
+        elif element.tag == cls.richNs+"dataTable":
             return True
-        elif(element.tag==cls.richNs+"subTable"):
-            element.tag=cls.richNs+"collapsibleSubTable"
+        elif element.tag == cls.richNs+"subTable":
+            element.tag = cls.richNs+"collapsibleSubTable"
             return True
-        elif(element.tag==cls.richNs+"scrollableDataTable"):
-            element.tag=cls.richNs+"extendedDataTable"
+        elif element.tag == cls.richNs+"scrollableDataTable":
+            element.tag = cls.richNs+"extendedDataTable"
             return True
         return False
-    richOrdering=classmethod(richOrdering)
-    def richTree(cls,element):
+    rich_iteration = classmethod(rich_iteration)
+    def rich_tree(cls, element):
         """migration of tree components"""
-        if(element.tag==cls.richNs+"tree"):
-            if(element.get("nodeFace")):
-                element.set("nodeType",element.get("nodeFace"))
+        if element.tag == cls.richNs+"tree":
+            if element.get("nodeFace"):
+                element.set("nodeType", element.get("nodeFace"))
                 element.attrib.pop("nodeFace")
-            if(element.get("switchType")):
-                element.set("toggleType",element.get("switchType"))
+            if element.get("switchType"):
+                element.set("toggleType", element.get("switchType"))
                 element.attrib.pop("switchType")
-            var=element.get("var")
-            if(var is not None):
+            var = element.get("var")
+            if var is not None:
                 for child in element.iter():
-                    for key,value in child.attrib.items():
-                        if(child.tag!=cls.richNs+"tree"or key!="var" ):
-                            child.attrib[key]=value.replace(var,var+".data")
-            if(element.get("treeNodeVar")):
-                element.set("var",element.get("treeNodeVar"))
+                    for key, value in child.attrib.items():
+                        if child.tag != cls.richNs+"tree"or key != "var":
+                            child.attrib[key] = value.replace(var, var+".data")
+            if element.get("treeNodeVar"):
+                element.set("var", element.get("treeNodeVar"))
                 element.attrib.pop("treeNodeVar")
             return True
-        elif(element.tag==cls.richNs+"treeNode"):
-            if(element.get("icon")):
-                element.set("iconExpanded",element.get("icon"))
-                element.set("iconCollapsed",element.get("icon"))
+        elif element.tag == cls.richNs+"treeNode":
+            if element.get("icon"):
+                element.set("iconExpanded", element.get("icon"))
+                element.set("iconCollapsed", element.get("icon"))
                 element.attrib.pop("icon")
             return True
-        elif(element.tag==cls.richNs+"treeNodesAdaptor"):
-            element.tag=cls.richNs+"treeModelAdaptor"
+        elif element.tag == cls.richNs+"treeNodesAdaptor":
+            element.tag = cls.richNs+"treeModelAdaptor"
             return True
-        elif (element.tag==cls.richNs+"recursiveTreeNodesAdaptor"):
-            element.tag=cls.richNs+"treeModelRecursiveAdaptor"
+        elif element.tag == cls.richNs+"recursiveTreeNodesAdaptor":
+            element.tag = cls.richNs+"treeModelRecursiveAdaptor"
             return True
         return False
-    richTree=classmethod(richTree)
-    def richDND(cls,element):
+    rich_tree = classmethod(rich_tree)
+    def rich_dnd(cls, element):
         """migration of drag and drop components"""
-        if(element.tag==cls.richNs+"dragSupport"):
-            element.tag=cls.richNs+"dragSource"
-            if(element.get("DragType")):
-                element.set("type",element.get("DragType"))
+        if element.tag == cls.richNs+"dragSupport":
+            element.tag = cls.richNs+"dragSource"
+            if element.get("DragType"):
+                element.set("type", element.get("DragType"))
                 element.attrib.pop("DragType")
             return True
-        elif (element.tag==cls.richNs+"dropSupport"):
-            element.tag=cls.richNs+"dropTarget"
+        elif element.tag == cls.richNs+"dropSupport":
+            element.tag = cls.richNs+"dropTarget"
             return True
-        elif(element.tag==cls.richNs+"dndParam"):
-            comment=ET.Comment(ET.tostring(element))
-            parent=element.getparent()
-            parent.insert(parent.index(element),comment)
+        elif element.tag == cls.richNs+"dndParam":
+            comment = ET.Comment(ET.tostring(element))
+            parent = element.getparent()
+            parent.insert(parent.index(element), comment)
             parent.remove(element)
-            print ("dndParam : not implemented")
+            print("dndParam : not implemented")
             return True
         return False
-    richDND=classmethod(richDND)
-    def richMiscellaneous(cls,element):
+    rich_dnd = classmethod(rich_dnd)
+    def rich_miscellaneous(cls, element):
         """migration of Miscellaneous components"""
-        if(element.tag==cls.richNs+"effect"):
-            comment=ET.Comment(ET.tostring(element))
-            parent=element.getparent()
-            parent.insert(parent.index(element),comment)
+        if element.tag == cls.richNs+"effect":
+            comment = ET.Comment(ET.tostring(element))
+            parent = element.getparent()
+            parent.insert(parent.index(element), comment)
             parent.remove(element)
-            print ("effect : not implemented")
+            print("effect : not implemented")
             return True
-        elif (element.tag==cls.richNs+"gmap"):
-            comment=ET.Comment(ET.tostring(element))
-            parent=element.getparent()
-            parent.insert(parent.index(element),comment)
+        elif element.tag == cls.richNs+"gmap":
+            comment = ET.Comment(ET.tostring(element))
+            parent = element.getparent()
+            parent.insert(parent.index(element), comment)
             parent.remove(element)
-            print ("gmap : not implemented")
+            print("gmap : not implemented")
             return True
-        elif(element.tag==cls.richNs+"insert"):
-            element.tag="{http://www.ihe.net/gazellecdk}insert"
+        elif element.tag == cls.richNs+"insert":
+            element.tag = "{http://www.ihe.net/gazellecdk}insert"
             return True
-        elif(element.tag==cls.richNs+"page"):
-            comment=ET.Comment(ET.tostring(element))
-            parent=element.getparent()
-            parent.insert(parent.index(element),comment)
+        elif element.tag == cls.richNs+"page":
+            comment = ET.Comment(ET.tostring(element))
+            parent = element.getparent()
+            parent.insert(parent.index(element), comment)
             parent.remove(element)
-            print ("page : not implemented")
+            print("page : not implemented")
             return True
-        elif(element.tag==cls.richNs+"virtualEarth"):
-            comment=ET.Comment(ET.tostring(element))
-            parent=element.getparent()
-            parent.insert(parent.index(element),comment)
+        elif element.tag == cls.richNs+"virtualEarth":
+            comment = ET.Comment(ET.tostring(element))
+            parent = element.getparent()
+            parent.insert(parent.index(element), comment)
             parent.remove(element)
-            print ("virtualEarth : not implemented")
+            print("virtualEarth : not implemented")
             return True
-        elif(element.tag==cls.richNs+"spacer"):
-            element.tag="{http://www.ihe.net/gazellecdk}spacer"
+        elif element.tag == cls.richNs+"spacer":
+            element.tag = "{http://www.ihe.net/gazellecdk}spacer"
             return True
         return False
-    richMiscellaneous=classmethod(richMiscellaneous)
-
-    def componantChange(cls,element):
+    rich_miscellaneous = classmethod(rich_miscellaneous)
+    def componant_change(cls, element):
         """migrate rich components """
-        if (cls.richValidation(element)==True):
+        if cls.rich_validation(element) or cls.rich_input(element) or cls.rich_output(element) or cls.rich_menu(element):
             return
-        elif (cls.richInput(element)==True):
+        elif cls.rich_ordering(element) or cls.rich_ordering(element) or cls.rich_iteration(element) or cls.rich_tree(element) or cls.rich_dnd(element):
             return
-        elif (cls.richOutput(element)==True):
+        elif cls.rich_miscellaneous(element) == True:
             return
-        elif (cls.richMenu(element)==True):
-            return
-        elif (cls.richOrdering(element)==True):
-            return
-        elif (cls.richTree(element)==True):
-            return
-        elif (cls.richDND(element)==True):
-            return
-        elif (cls.richMiscellaneous(element)==True):
-            return
-    componantChange=classmethod(componantChange)
-
+    componant_change = classmethod(componant_change)

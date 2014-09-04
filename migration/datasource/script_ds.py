@@ -1,99 +1,104 @@
+"""-ds.xml parser"""
 #!/usr/bin/python3
 # -*-coding:utf-8 -*
 from lxml import etree as ET
 from migration.utils.jndiMigration import JndiMigration
 import subprocess
-basestring = (str,bytes)
-
 class DataSourceMigration:
-    
-    def parseXml(cls,filePath):
+    """ data source file """
+    def parse_xml(cls, file_path):
         """parse *-ds.xml to change for the new version"""
         parser = ET.XMLParser(remove_blank_text=True)
-        tree = ET.parse(filePath,parser)
+        tree = ET.parse(file_path, parser)
         root = tree.getroot()
-        localTxDatasource=root.find("local-tx-datasource")
-        if(localTxDatasource is not None):      
-            jndiName=localTxDatasource.find("jndi-name")
-            connectionUrl=localTxDatasource.find("connection-url")
-            userName=localTxDatasource.find("user-name")
-            password=localTxDatasource.find("password")
-            minPoolSize=localTxDatasource.find("min-pool-size")
-            maxPoolSize=localTxDatasource.find("max-pool-size")
-            idleTimeoutMinutes=localTxDatasource.find("idle-timeout-minutes")
-            preparedStatementCacheSize=localTxDatasource.find("prepared-statement-cache-size")
-            blockingTimeoutMillis=localTxDatasource.find("blocking-timeout-millis")
-            checkValidConnectionSql=localTxDatasource.find("check-valid-connection-sql")
-            NSMAP={None : "http://www.jboss.org/ironjacamar/schema"} 
-            newRoot = ET.Element("datasources",nsmap=NSMAP)
-            datasource=ET.Element("{http://www.jboss.org/ironjacamar/schema}datasource")
-            datasource.set("jta","true")
-            datasource.set("enabled","true")
-            datasource.set("use-java-context","true")
-            datasource.set("pool-name",jndiName.text)
-            datasource.set("jndi-name",JndiMigration.changeJndiDS(jndiName.text,"jboss"))
-            driver=ET.Element("{http://www.jboss.org/ironjacamar/schema}driver")
-            driver.text="postgresql"
-            connectionUrl.tag="{http://www.jboss.org/ironjacamar/schema}connection-url"
-            datasource.append(connectionUrl)
-            datasource.append(driver)
-            security=ET.Element("{http://www.jboss.org/ironjacamar/schema}security")
-            userName.tag="{http://www.jboss.org/ironjacamar/schema}user-name"
-            password.tag="{http://www.jboss.org/ironjacamar/schema}password"
-            security.append(userName)
-            security.append(password)
-            datasource.append(security)
-            pool=ET.Element("{http://www.jboss.org/ironjacamar/schema}pool")
-            if(minPoolSize is not None):
-                minPoolSize.tag="{http://www.jboss.org/ironjacamar/schema}min-pool-size"
-                pool.append(minPoolSize)
-            if(minPoolSize is not None):   
-                maxPoolSize.tag="{http://www.jboss.org/ironjacamar/schema}max-pool-size"
-                pool.append(maxPoolSize)
-            prefill=ET.Element("{http://www.jboss.org/ironjacamar/schema}prefill")
-            prefill.text="false"
-            useStrictMin=ET.Element("{http://www.jboss.org/ironjacamar/schema}use-strict-min")
-            useStrictMin.text="false"
-            flushStrategy=ET.Element("{http://www.jboss.org/ironjacamar/schema}flush-strategy")
-            flushStrategy.text="FailingConnectionOnly"
-            pool.append(prefill)
-            pool.append(useStrictMin)
-            pool.append(flushStrategy)
-            datasource.append(pool)
-            if(checkValidConnectionSql is not None):
-                validation=ET.Element("{http://www.jboss.org/ironjacamar/schema}validation")
-                checkValidConnectionSql.tag="{http://www.jboss.org/ironjacamar/schema}check-valid-connection-sql"
-                validateOnMatch=ET.Element("{http://www.jboss.org/ironjacamar/schema}validate-on-match")
-                validateOnMatch.text="false"
-                backgroundValidation=ET.Element("{http://www.jboss.org/ironjacamar/schema}background-validation")
-                backgroundValidation.text="false"
-                useFastFail=ET.Element("{http://www.jboss.org/ironjacamar/schema}use-fast-fail")
-                useFastFail.text="false"
-                validation.append(checkValidConnectionSql)
-                validation.append(validateOnMatch)
-                validation.append(backgroundValidation)
-                validation.append(useFastFail)
-                datasource.append(validation)
-            timeout=ET.Element("{http://www.jboss.org/ironjacamar/schema}timeout")
-            if(idleTimeoutMinutes is not None):
-                idleTimeoutMinutes.tag="{http://www.jboss.org/ironjacamar/schema}idle-timeout-minutes"
-                timeout.append(idleTimeoutMinutes)
-            if(blockingTimeoutMillis is not None):
-                blockingTimeoutMillis.tag="{http://www.jboss.org/ironjacamar/schema}blocking-timeout-millis"
-                timeout.append(blockingTimeoutMillis)
-            datasource.append(timeout)
-            statement=ET.Element("{http://www.jboss.org/ironjacamar/schema}statement")
-            trackStatements=ET.Element("{http://www.jboss.org/ironjacamar/schema}track-statements")
-            trackStatements.text="false"
-            if(checkValidConnectionSql is not None):
-                preparedStatementCacheSize.tag="{http://www.jboss.org/ironjacamar/schema}prepared-statement-cache-size"
-                statement.append(preparedStatementCacheSize)
-            statement.append(trackStatements)
-            datasource.append(statement)
-            newRoot.append(datasource)
-            tree._setroot(newRoot)
-            index=filePath.rfind("/")
-            subprocess.call(["mkdir","-p",filePath[:index]+"/META-INF"])
-            subprocess.call(["rm",filePath])
-            tree.write(filePath[:index]+"/META-INF/"+filePath[index:],pretty_print=True,encoding='utf-8',xml_declaration=True)
-    parseXml=classmethod(parseXml)
+        it = root.findall("local-tx-datasource")
+        nsmap_ = {None : "http://www.jboss.org/ironjacamar/schema"}
+        new_root = ET.Element("datasources", nsmap=nsmap_)
+        for localtxdatasource in it:
+            datasource = cls.parse_datasource(localtxdatasource)
+            new_root.append(datasource)
+        if not it:
+            tree._setroot(new_root)
+            index = file_path.rfind("/")
+            subprocess.call(["mkdir", "-p", file_path[:index]+"/META-INF"])
+            subprocess.call(["rm", file_path])
+            tree.write(file_path[:index]+"/META-INF/"+file_path[index:], pretty_print=True, encoding='utf-8', xml_declaration=True)
+    parse_xml = classmethod(parse_xml)
+    def parse_datasource(cls, localtxdatasource):
+        """parse the info in a local-tx-datasource and construct a new ode with the corect architecture"""
+        jndi_name = localtxdatasource.find("jndi-name")
+        connection_url = localtxdatasource.find("connection-url")
+        user_name = localtxdatasource.find("user-name")
+        password = localtxdatasource.find("password")
+        min_pool_size = localtxdatasource.find("min-pool-size")
+        max_pool_size = localtxdatasource.find("max-pool-size")
+        idle_timeoutminutes = localtxdatasource.find("idle-timeout-minutes")
+        preparedstatementcachesize = localtxdatasource.find("prepared-statement-cache-size")
+        blockingtimeoutmillis = localtxdatasource.find("blocking-timeout-millis")
+        checkvalidconnectionsql = localtxdatasource.find("check-valid-connection-sql")
+        datasource = ET.Element("{http://www.jboss.org/ironjacamar/schema}datasource")
+        datasource.set("jta", "true")
+        datasource.set("enabled", "true")
+        datasource.set("use-java-context", "true")
+        datasource.set("pool-name", jndi_name.text)
+        datasource.set("jndi-name", JndiMigration.change_jndi_ds(jndi_name.text, "jboss"))
+        driver = ET.Element("{http://www.jboss.org/ironjacamar/schema}driver")
+        driver.text = "postgresql"
+        connection_url.tag = "{http://www.jboss.org/ironjacamar/schema}connection-url"
+        datasource.append(connection_url)
+        datasource.append(driver)
+        security = ET.Element("{http://www.jboss.org/ironjacamar/schema}security")
+        user_name.tag = "{http://www.jboss.org/ironjacamar/schema}user-name"
+        password.tag = "{http://www.jboss.org/ironjacamar/schema}password"
+        security.append(user_name)
+        security.append(password)
+        datasource.append(security)
+        pool = ET.Element("{http://www.jboss.org/ironjacamar/schema}pool")
+        if min_pool_size is not None:
+            min_pool_size.tag = "{http://www.jboss.org/ironjacamar/schema}min-pool-size"
+            pool.append(min_pool_size)
+        if min_pool_size is not None:
+            max_pool_size.tag = "{http://www.jboss.org/ironjacamar/schema}max-pool-size"
+            pool.append(max_pool_size)
+        prefill = ET.Element("{http://www.jboss.org/ironjacamar/schema}prefill")
+        prefill.text = "false"
+        use_strict_min = ET.Element("{http://www.jboss.org/ironjacamar/schema}use-strict-min")
+        use_strict_min.text = "false"
+        flush_strategy = ET.Element("{http://www.jboss.org/ironjacamar/schema}flush-strategy")
+        flush_strategy.text = "FailingConnectionOnly"
+        pool.append(prefill)
+        pool.append(use_strict_min)
+        pool.append(flush_strategy)
+        datasource.append(pool)
+        if checkvalidconnectionsql is not None:
+            validation = ET.Element("{http://www.jboss.org/ironjacamar/schema}validation")
+            checkvalidconnectionsql.tag = "{http://www.jboss.org/ironjacamar/schema}check-valid-connection-sql"
+            validate_on_match = ET.Element("{http://www.jboss.org/ironjacamar/schema}validate-on-match")
+            validate_on_match.text = "false"
+            background_validation = ET.Element("{http://www.jboss.org/ironjacamar/schema}background-validation")
+            background_validation.text = "false"
+            use_fast_fail = ET.Element("{http://www.jboss.org/ironjacamar/schema}use-fast-fail")
+            use_fast_fail.text = "false"
+            validation.append(checkvalidconnectionsql)
+            validation.append(validate_on_match)
+            validation.append(background_validation)
+            validation.append(use_fast_fail)
+            datasource.append(validation)
+        timeout = ET.Element("{http://www.jboss.org/ironjacamar/schema}timeout")
+        if idle_timeoutminutes is not None:
+            idle_timeoutminutes.tag = "{http://www.jboss.org/ironjacamar/schema}idle-timeout-minutes"
+            timeout.append(idle_timeoutminutes)
+        if blockingtimeoutmillis is not None:
+            blockingtimeoutmillis.tag = "{http://www.jboss.org/ironjacamar/schema}blocking-timeout-millis"
+            timeout.append(blockingtimeoutmillis)
+        datasource.append(timeout)
+        statement = ET.Element("{http://www.jboss.org/ironjacamar/schema}statement")
+        track_statements = ET.Element("{http://www.jboss.org/ironjacamar/schema}track-statements")
+        track_statements.text = "false"
+        if checkvalidconnectionsql is not None:
+            preparedstatementcachesize.tag = "{http://www.jboss.org/ironjacamar/schema}prepared-statement-cache-size"
+            statement.append(preparedstatementcachesize)
+        statement.append(track_statements)
+        datasource.append(statement)
+        return datasource
+    parse_datasource = classmethod(parse_datasource)
