@@ -11,13 +11,13 @@ class DataSourceMigration:
         parser = ET.XMLParser(remove_blank_text=True)
         tree = ET.parse(file_path, parser)
         root = tree.getroot()
-        it = root.findall("local-tx-datasource")
+        iterator = root.findall("local-tx-datasource")
         nsmap_ = {None : "http://www.jboss.org/ironjacamar/schema"}
         new_root = ET.Element("datasources", nsmap=nsmap_)
-        for localtxdatasource in it:
+        for localtxdatasource in iterator:
             datasource = cls.parse_datasource(localtxdatasource)
             new_root.append(datasource)
-        if not it:
+        if iterator:
             tree._setroot(new_root)
             index = file_path.rfind("/")
             subprocess.call(["mkdir", "-p", file_path[:index]+"/META-INF"])

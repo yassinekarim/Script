@@ -11,9 +11,9 @@ class ConfigurationReader:
     def read_annotation(cls, tag):
         """read annotation tag and return AnnotationReplacement object"""
         mapping = []
-        for it in tag:
-            if it.tag == "mapping":
-                mapping.append((it.get("old"), it.get("new")))
+        for iterator in tag:
+            if iterator.tag == "mapping":
+                mapping.append((iterator.get("old"), iterator.get("new")))
             else:
                 print("error: children of annotation has not the tag mapping")
         return AnnotationReplacement(tag.get("regex"), tag.get("replacement"), mapping)
@@ -22,11 +22,11 @@ class ConfigurationReader:
         """read class tag and return ClassReplacement object"""
         method = []
         mapping = []
-        for it in tag:
-            if it.tag == "method":
-                method.append(it.get("regex"))
-            elif it.tag == "mapping":
-                mapping.append((it.get("old"), it.get("new")))
+        for iterator in tag:
+            if iterator.tag == "method":
+                method.append(iterator.get("regex"))
+            elif iterator.tag == "mapping":
+                mapping.append((iterator.get("old"), iterator.get("new")))
             else:
                 print("error: children of class has not the tag method or mapping")
         return ClassReplacement(tag.get("regex"), tag.get("replacement"), method, mapping)

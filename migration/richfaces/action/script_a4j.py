@@ -17,9 +17,9 @@ class A4jElement:
         #  remove and return the last elemen of the list
         last = list_str.pop()
         library = ""
-        for it in list_str:
-            if it != "":
-                library += it+"/"
+        for iterator in list_str:
+            if iterator != "":
+                library += iterator+"/"
         library += last
         return library, name
     parse_src = classmethod(parse_src)
@@ -89,8 +89,8 @@ class A4jElement:
                         child.tag = cls.a4jNs+"param"
                         target = child.get("target")
                         if target is not None:
-                            element.set("assignTo", target)
-                            element.attrib.pop("target")
+                            child.set("assignTo", target)
+                            child.attrib.pop("target")
         elif element.tag == cls.a4jNs+"include":
             subview = ET.Element("{http://java.sun.com/jsf/core}subview")
             subview.set("id", "subview_"+str(cls.subviewId))

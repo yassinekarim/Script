@@ -69,10 +69,10 @@ class AbstractReplacement:
     def execute_replace(self, content):
         """find all occurence of the regex and call change_code to change them one by one """
         regex = re.compile(self.regex, re.MULTILINE)
-        it = regex.finditer(content)
+        iterator = regex.finditer(content)
         import_changed = False
         offset = 0
-        for result in it:
+        for result in iterator:
             debut, fin = result.span()
             debut += offset
             fin += offset
@@ -148,11 +148,11 @@ class ClassReplacement(AbstractReplacement):
     def execute_replace(self, content):
         """find all occurence of the regex and call change_code to change them one by one """
         regex = re.compile(self.regex, re.MULTILINE)
-        it = regex.finditer(content)
+        iterator = regex.finditer(content)
         import_changed = False
         regex_match = False
         offset = 0
-        for result in it:
+        for result in iterator:
             debut, fin = result.span()
             debut = debut+offset
             fin = fin+offset

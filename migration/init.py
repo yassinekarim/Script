@@ -2,6 +2,7 @@
 # -*-coding:utf-8 -*
 import os
 import sys
+sys.path.append(os.getcwd()+"/..")
 from migration.main import Main
 from migration.java.action.confReader import ConfigurationReader
 from migration.java.action.script_java import JavaTransformation

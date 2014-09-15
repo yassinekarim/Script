@@ -7,6 +7,12 @@ class RichElement:
     richNs = "{http://richfaces.org/rich}"
     hNs = "{http://java.sun.com/jsf/html}"
     xhtmlNs = "{http://www.w3.org/1999/xhtml}"
+    def change_attribute(cls, element, old, new):
+        """replace old by new attribute"""
+        if element.get(old):
+            element.set(new, element.get(old))
+            element.attrib.pop(old)
+    change_attribute = classmethod(change_attribute)
     def migrate_value_change_attribute(cls, element):
         """migrate value change attribute a common attribute to some rich tag"""
         if element.get("ValueChangeListener"):
@@ -17,6 +23,12 @@ class RichElement:
             element.attrib.pop("ValueChangeEvent")
         return element
     migrate_value_change_attribute = classmethod(migrate_value_change_attribute)
+    def comment_element(cls,element):
+        comment = ET.Comment(ET.tostring(element))
+        parent = element.getparent()
+        parent.insert(parent.index(element), comment)
+        parent.remove(element)
+    comment_element = classmethod(comment_element)
     def get_facet_parent(cls, element):
         """return first parent facet tag of the element"""
         parent = element.getparent()
@@ -48,10 +60,7 @@ class RichElement:
             print("method in client side API renamed")
             return True
         elif element.tag == cls.richNs+"colorPicker":
-            comment = ET.Comment(ET.tostring(element))
-            parent = element.getparent()
-            parent.insert(parent.index(element), comment)
-            parent.remove(element)
+            cls.comment_element(element)
             print("colorPicker not implemented(custom component)")
             return True
         elif element.tag == cls.richNs+"comboBox":
@@ -63,7 +72,7 @@ class RichElement:
             script = ET.Element("{http://www.w3.org/1999/xhtml}script")
             script.set("type", "text/javascript")
             script.text = "window.CKEDITOR_BASEPATH = '#{request.contextPath}/org.richfaces.resources/javax.faces.resource/org.richfaces.ckeditor/'"
-            parent = element.getparent()
+            parent = element.getparent().getparent()
             parent.insert(0, script)
             print("you should configure rich editor manually see home.xhtml in simmulator common for a sample")
             return True
@@ -111,6 +120,8 @@ class RichElement:
             return True
         elif element.tag == cls.richNs+"simpleTogglePanel":
             element.tag = cls.richNs+"collapsiblePanel"
+            cls.change_attribute(element,"opened","expanded")
+            cls.change_attribute(element,"label","header")
             return True
         elif element.tag == cls.richNs+"tabPanel":
             element = RichElement.migrate_value_change_attribute(element)
@@ -161,6 +172,7 @@ class RichElement:
             return True
         elif element.tag == cls.richNs+"toolTip":
             element.tag = cls.richNs+"tooltip"
+            cls.change_attribute(element,"for","target")
             return True
         return False
     rich_output = classmethod(rich_output)
@@ -196,17 +208,13 @@ class RichElement:
             sort_order = element.get("sortOrder")
             if sort_order is not None:
                 element.set("sortOrder", sort_order.lower())
-            if element[0].tag == "{http://java.sun.com/jsf/core}facet":
+            if list(element) and element[0].tag == "{http://java.sun.com/jsf/core}facet":
                 element[0].tag = "{http://java.sun.com/jsf/facelets}define"
             return True
-        elif element.tag == cls.richNs+"columnGroup":
-            element.tag = cls.richNs+"columnGroup"
-            return True
+        # elif element.tag == cls.richNs+"columnGroup":
+        #     return True
         elif element.tag == cls.richNs+"columns":
-            comment = ET.Comment(ET.tostring(element))
-            parent = element.getparent()
-            parent.insert(parent.index(element), comment)
-            parent.remove(element)
+            cls.comment_element(element)
             print("columns not implemented")
             return True
         elif element.tag == cls.richNs+"dataOrderingList":
@@ -222,17 +230,14 @@ class RichElement:
             element.set("type", "unordered")
             return True
         elif element.tag == cls.richNs+"dataFilterSlider":
-            comment = ET.Comment(ET.tostring(element))
-            parent = element.getparent()
-            parent.insert(parent.index(element), comment)
-            parent.remove(element)
+            cls.comment_element(element)
             print("dataFilterSlider not implemented")
             return True
         elif element.tag == cls.richNs+"datascroller":
             element.tag = cls.richNs+"dataScroller"
             return True
-        elif element.tag == cls.richNs+"dataTable":
-            return True
+        # elif element.tag == cls.richNs+"dataTable":
+        #     return True
         elif element.tag == cls.richNs+"subTable":
             element.tag = cls.richNs+"collapsibleSubTable"
             return True
@@ -241,6 +246,13 @@ class RichElement:
             return True
         return False
     rich_iteration = classmethod(rich_iteration)
+    def update_var_references(cls,element,var):
+        """replace var by var.data in childrens of the element"""
+        for child in element.iter():
+            for key, value in child.attrib.items():
+                if child.tag != cls.richNs+"tree"or key != "var":
+                    child.attrib[key] = value.replace(var, var+".data")
+    update_var_references = classmethod(update_var_references)
     def rich_tree(cls, element):
         """migration of tree components"""
         if element.tag == cls.richNs+"tree":
@@ -252,10 +264,7 @@ class RichElement:
                 element.attrib.pop("switchType")
             var = element.get("var")
             if var is not None:
-                for child in element.iter():
-                    for key, value in child.attrib.items():
-                        if child.tag != cls.richNs+"tree"or key != "var":
-                            child.attrib[key] = value.replace(var, var+".data")
+                cls.update_var_references(element,var)
             if element.get("treeNodeVar"):
                 element.set("var", element.get("treeNodeVar"))
                 element.attrib.pop("treeNodeVar")
@@ -286,10 +295,7 @@ class RichElement:
             element.tag = cls.richNs+"dropTarget"
             return True
         elif element.tag == cls.richNs+"dndParam":
-            comment = ET.Comment(ET.tostring(element))
-            parent = element.getparent()
-            parent.insert(parent.index(element), comment)
-            parent.remove(element)
+            cls.comment_element(element)
             print("dndParam : not implemented")
             return True
         return False
@@ -297,34 +303,22 @@ class RichElement:
     def rich_miscellaneous(cls, element):
         """migration of Miscellaneous components"""
         if element.tag == cls.richNs+"effect":
-            comment = ET.Comment(ET.tostring(element))
-            parent = element.getparent()
-            parent.insert(parent.index(element), comment)
-            parent.remove(element)
+            cls.comment_element(element)
             print("effect : not implemented")
             return True
         elif element.tag == cls.richNs+"gmap":
-            comment = ET.Comment(ET.tostring(element))
-            parent = element.getparent()
-            parent.insert(parent.index(element), comment)
-            parent.remove(element)
+            cls.comment_element(element)
             print("gmap : not implemented")
             return True
         elif element.tag == cls.richNs+"insert":
             element.tag = "{http://www.ihe.net/gazellecdk}insert"
             return True
         elif element.tag == cls.richNs+"page":
-            comment = ET.Comment(ET.tostring(element))
-            parent = element.getparent()
-            parent.insert(parent.index(element), comment)
-            parent.remove(element)
+            cls.comment_element(element)
             print("page : not implemented")
             return True
         elif element.tag == cls.richNs+"virtualEarth":
-            comment = ET.Comment(ET.tostring(element))
-            parent = element.getparent()
-            parent.insert(parent.index(element), comment)
-            parent.remove(element)
+            cls.comment_element(element)
             print("virtualEarth : not implemented")
             return True
         elif element.tag == cls.richNs+"spacer":
@@ -335,9 +329,9 @@ class RichElement:
     def componant_change(cls, element):
         """migrate rich components """
         if cls.rich_validation(element) or cls.rich_input(element) or cls.rich_output(element) or cls.rich_menu(element):
-            return
+            pass
         elif cls.rich_ordering(element) or cls.rich_ordering(element) or cls.rich_iteration(element) or cls.rich_tree(element) or cls.rich_dnd(element):
-            return
+            pass
         elif cls.rich_miscellaneous(element) == True:
-            return
+            pass
     componant_change = classmethod(componant_change)

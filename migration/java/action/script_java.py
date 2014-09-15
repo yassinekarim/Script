@@ -10,46 +10,51 @@ class JavaTransformation:
         """getter for the java replacements list costructed from conf file"""
         return cls.replacement_list
     get_replacement_list = classmethod(get_replacement_list)
-    def add_method(cls, content):
-        """add getId method to class wich extend's HibernateDataModel"""
-        regex_list = [r"extends[\s]*FilterDataModel[\s]*<.+>", r"extends[\s]*HibernateDataModel[\s]*<.+>", r"new[\s]*FilterDataModel[\s]*<.+>", r"new[\s]*HibernateDataModel[\s]*<.+>"]
+    def add_method(cls,it,content):
+        """add mehod get id for previous matches"""
         offset = 0
+        for result in it:
+            match = result.group()
+            class_match = match[match.find('<')+1:match.__len__()-1]
+            class_match = class_match.strip()
+            if class_match.__len__()>1:
+                if "extend" in match:
+                    fin = content.rfind('}')
+                    content = content[:fin]+"""@Override
+        protected Object getId("""+class_match+""" t) {
+        // TODO Auto-generated method stub
+        return t.getId();
+        }""" +content[fin-1:]
+                else:
+                    debut, fin = result.span()
+                    tmp = content[debut+offset:]
+                    index = tmp.find(";")
+                    method = """{
+                    @Override
+        protected Object getId("""+class_match+""" t) {
+        // TODO Auto-generated method stub
+        return t.getId();
+        }
+        }"""
+                    tmp = tmp[:index]+method+tmp[index:]
+                    content = content[:debut+offset]+tmp
+                    offset += method.__len__()
+        return content
+    add_method = classmethod(add_method)
+    def search_datamodel(cls, content):
+        """seach for class that extend or instanciate FilterDataModel/HibernateDataModel"""
+        regex_list = [r"extends[\s]*FilterDataModel[\s]*<.+>", r"extends[\s]*HibernateDataModel[\s]*<.+>", r"new[\s]*FilterDataModel[\s]*<.+>", r"new[\s]*HibernateDataModel[\s]*<.+>"]
         for reg in regex_list:
             regex = re.compile(reg)
             it = regex.finditer(content)
-            for result in it:
-                match = result.group()
-                class_match = match[match.find('<')+1:match.__len__()-1]
-                class_match = class_match.strip()
-                if class_match.__len__()>1:
-                    if "extend" in match:
-                        fin = content.rfind('}')
-                        content = content[:fin]+"""@Override
-        protected Object getId("""+class_match+""" t) {
-            // TODO Auto-generated method stub
-            return t.getId();
-        }""" +content[fin-1:]
-                    else:
-                        debut, fin = result.span()
-                        tmp = content[debut+offset:]
-                        index = tmp.find(";")
-                        method = """{
-                        @Override
-        protected Object getId("""+class_match+""" t) {
-            // TODO Auto-generated method stub
-            return t.getId();
-        }
-        }"""
-                        tmp = tmp[:index]+method+tmp[index:]
-                        content = content[:debut+offset]+tmp
-                        offset += method.__len__()
+            content = cls.add_method(it,content)
         return content
-    add_method = classmethod(add_method)
+    search_datamodel = classmethod(search_datamodel)
     def upgrade_code(cls, content):
         """return the upgraded code as a string"""
         for element in JavaTransformation.replacement_list:
             content = element.execute_replace(content)
-        content = cls.add_method(content)
+        content = cls.search_datamodel(content)
         return content
     upgrade_code = classmethod(upgrade_code)
     def re_init_method_list(cls):
